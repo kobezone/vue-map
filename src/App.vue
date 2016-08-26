@@ -1,8 +1,6 @@
 <template>
-    <div id="app" class="container-fluid">
-
-        <!--<img class="logo" src="./assets/logo.png">-->
-        <!--<hello></hello>-->
+    <div id="app">
+        <mapside></mapside>
         <map></map>
     </div>
 
@@ -10,12 +8,11 @@
 <link rel="stylesheet" href="./assets/bootstrap/css/bootstrap.min.css">
 
 <script>
-    import Hello from './components/Hello'
+    import Mapside from './components/Mapside'
     import Map from './components/Map'
     export default {
-       
         components: {
-            Hello,
+            Mapside,
             Map
         }
     }
@@ -28,18 +25,21 @@
     }
 
     body {
-        display: flex;
+        /*display: flex;*/
         align-items: center;
         justify-content: center;
         height: 100%;
+        width: 100%;
     }
 
     #app {
-        color: #2c3e50;
-        margin-top: -100px;
-        max-width: 600px;
+        height: 100%;
+        width: 100%;
+        /*color: #2c3e50;*/
+        /*margin-top: -100px;*/
+        /*max-width: 600px;*/
         font-family: Source Sans Pro, Helvetica, sans-serif;
-        text-align: center;
+        /*text-align: center;*/
     }
 
     #app a {
@@ -47,8 +47,4 @@
         text-decoration: none;
     }
 
-    .logo {
-        width: 100px;
-        height: 100px
-    }
 </style>

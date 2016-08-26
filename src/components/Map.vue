@@ -21,7 +21,8 @@
                 var map = new Map("map", {
                     center: [-118, 34.5],
                     zoom: 8,
-                    basemap: "topo"
+                    basemap: "topo",
+                    logo:false
                 });
             });
         },
@@ -33,7 +34,9 @@
 </script>
 
 <style scoped>
-    div {
-
-    }
+   #map{
+       height:100%;
+       width:70%;
+       float:right;
+   }
 </style>
