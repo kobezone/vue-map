@@ -3,9 +3,8 @@
         <mapside></mapside>
         <map></map>
     </div>
-
 </template>
-<link rel="stylesheet" href="./assets/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="../lib/bootstrap/css/bootstrap.min.css">
 
 <script>
     import Mapside from './components/Mapside'
