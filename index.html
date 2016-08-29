@@ -1,91 +1,93 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
+  <meta charset="utf-8">
   <link rel="shortcut icon" href="static/images/logo.ico"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="vue map">
-    <meta name="author" content="wwmin">
-    <title>vue-map</title>
-    <link rel="stylesheet" href="./static/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="http://60.29.110.104/arcgis_js_api/library/3.17/3.17compact/esri/css/esri.css">
-    <link rel="stylesheet"
-          href="http://60.29.110.104/arcgis_js_api/library/3.17/3.17compact/dijit/themes/claro/claro.css">
-    <style>
-        /*设置featureLayer的hover鼠标样式*/
-        /* mouse hover animation */
-        /*放在map.vue中不起作用*/
-        @keyframes highlight {
-            100% {
-                fill-opacity: 1;
-                stroke-width: 4;
-                stroke: rgb(220, 20, 60);
-            }
-        }
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="vue map">
+  <meta name="author" content="wwmin">
+  <title>vue-map</title>
+  <link rel="stylesheet" href="./static/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="http://60.29.110.104/arcgis_js_api/library/3.17/3.17compact/esri/css/esri.css">
+  <link rel="stylesheet"
+        href="http://60.29.110.104/arcgis_js_api/library/3.17/3.17compact/dijit/themes/claro/claro.css">
+  <style>
+    /*设置featureLayer的hover鼠标样式*/
+    /* mouse hover animation */
+    /*放在map.vue中不起作用*/
+    @keyframes highlight {
+      100% {
+        fill-opacity: 1;
+        stroke-width: 4;
+        stroke: rgb(220, 20, 60);
+      }
+    }
 
-        @-webkit-keyframes highlight {
-            100% {
-                fill-opacity: 1;
-                stroke-width: 4;
-                stroke: rgb(220, 20, 60);
-            }
+    @-webkit-keyframes highlight {
+      100% {
+        fill-opacity: 1;
+        stroke-width: 4;
+        stroke: rgb(220, 20, 60);
+      }
+    }
+
+    path:hover {
+      cursor: pointer;
+      animation-duration: 0.1s;
+      animation-name: highlight;
+      animation-timing-function: linear;
+      animation-fill-mode: forwards;
+      -webkit-animation-duration: 0.1s;
+      -webkit-animation-name: highlight;
+      -webkit-animation-timing-function: linear;
+      -webkit-animation-fill-mode: forwards;
+    }
+
+    circle:hover {
+      cursor: pointer;
+      animation-duration: 0.2s;
+      animation-name: highlight;
+      animation-timing-function: linear;
+      animation-fill-mode: forwards;
+      -webkit-animation-duration: 0.2s;
+      -webkit-animation-name: highlight;
+      -webkit-animation-timing-function: linear;
+      -webkit-animation-fill-mode: forwards;
+    }
+  </style>
+  <script type="text/javascript">
+    var dojoConfig = {
+      async: true,
+      parseOnLoad: true,
+      packages: [{
+        "name": "bism",
+        "location": location.pathname.replace(/\/[^/]+$/, "") + "static/lib/bism"
+      },
+        {
+          "name": "bdlayers",
+          "location": location.pathname.replace(/\/[^/]+$/, "") + "static/lib/baiduLayers"
+        },
+        {
+          "name": "tdtLayers",
+          "location": location.pathname.replace(/\/[^/]+$/, "") + "static/lib/tiandituLayers"
+        },
+        {
+          "name": "utils",
+          "location": location.pathname.replace(/\/[^/]+$/, "") + "static/lib/utils"
+        },
+        {
+          "name": "popup",
+          "location": location.pathname.replace(/\/[^/]+$/, "") + "static/lib/popup"
         }
-        path:hover {
-            cursor: pointer;
-            animation-duration: 0.1s;
-            animation-name: highlight;
-            animation-timing-function: linear;
-            animation-fill-mode: forwards;
-            -webkit-animation-duration: 0.1s;
-            -webkit-animation-name: highlight;
-            -webkit-animation-timing-function: linear;
-            -webkit-animation-fill-mode: forwards;
-        }
-        circle:hover{
-            cursor: pointer;
-            animation-duration: 0.2s;
-            animation-name: highlight;
-            animation-timing-function: linear;
-            animation-fill-mode: forwards;
-            -webkit-animation-duration: 0.2s;
-            -webkit-animation-name: highlight;
-            -webkit-animation-timing-function: linear;
-            -webkit-animation-fill-mode: forwards;
-        }
-    </style>
-    <script type="text/javascript">
-        var dojoConfig = {
-            async: true,
-            parseOnLoad: true,
-            packages: [{
-                "name": "bism",
-                "location": location.pathname.replace(/\/[^/]+$/, "") + "static/lib/bism"
-            },
-                {
-                    "name": "bdlayers",
-                    "location": location.pathname.replace(/\/[^/]+$/, "") + "static/lib/baiduLayers"
-                },
-                {
-                    "name": "tdtLayers",
-                    "location": location.pathname.replace(/\/[^/]+$/, "") + "static/lib/tiandituLayers"
-                },
-                {
-                    "name": "utils",
-                    "location": location.pathname.replace(/\/[^/]+$/, "") + "static/lib/utils"
-                },
-                {
-                    "name": "popup",
-                    "location": location.pathname.replace(/\/[^/]+$/, "") + "static/lib/popup"
-                }
-            ]
-        };
-    </script>
+      ]
+    };
+  </script>
 </head>
 <body>
-<div id="app">
-  <app></app>
-</div>
+
+<app></app>
+
 <!--<app></app>-->
 
 <!-- built files will be auto injected -->
@@ -93,7 +95,7 @@
 <script src="./static/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="http://60.29.110.104/arcgis_js_api/library/3.17/3.17compact/init.js"></script>
 <script>
-    var dojoRequire = require;
+  var dojoRequire = require;
 </script>
 </body>
 </html>

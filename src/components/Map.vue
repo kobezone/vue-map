@@ -307,15 +307,17 @@
 <style>
   #map {
     height: 100%;
-    width: 75%;
+    width: calc(100% - 300px);
     float: right;
+    position:relative;
   }
 
   #HomeButton {
     position: absolute;
     float: left;
     top: 110px;
-    left: 26%;
+    /*left: calc(100% - 290px);*/
+    left:20px;
     z-index: 50;
   }
 
@@ -342,7 +344,7 @@
     padding: 2px;
     /*left: 6px;*/
     bottom: 1px;
-    z-index: 99;
+    z-index: 2;
   }
 
 </style>

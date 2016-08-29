@@ -94,6 +94,13 @@
           {text: 'Three', value: 'C'}
         ]
       }
+    },
+    events:{
+      test:function(data){
+        console.log('component a.vue:Got it!') ;
+        console.log('data:',data);
+        return false
+      }
     }
   }
 </script>

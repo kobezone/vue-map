@@ -9,7 +9,9 @@
   <slot name="one"></slot>
   <slot name="two"></slot>
   <slot></slot>
-
+  <div>
+    {{info.name +'|'+ info.age}}
+  </div>
 </template>
 
 <script>
@@ -17,7 +19,11 @@
   export default{
     data(){
       return {
-        msg: 'hello vue'
+        msg: 'hello vue',
+        info:{
+          name:"wwmin",
+          age:"10"
+        }
       }
     },
     methods: {
