@@ -1,27 +1,30 @@
 <template xmlns:v-bind="http://www.w3.org/1999/xhtml">
 
   <div id="demo">
-    <input v-model="query">
-    <ul>
-      <li v-for="item in list | filterBy query"
-          transition="staggered" stagger="100">
-        {{item.msg}}
-      </li>
-    </ul>
+    <div>
+      {{msg}}
+    </div>
+    <!--<input v-model="query">-->
+    <!--<ul>-->
+      <!--<li v-for="item in list | filterBy query"-->
+          <!--transition="staggered" stagger="100">-->
+        <!--{{item.msg}}-->
+      <!--</li>-->
+    <!--</ul>-->
 
-    <select  v-model = "selected">
-      <option v-for="option in options" v-bind:value="option.value" v-text="option.text">
-      </option>
-      </select>
+    <!--<select v-model="selected">-->
+      <!--<option v-for="option in options" v-bind:value="option.value" v-text="option.text">-->
+      <!--</option>-->
+    <!--</select>-->
+
   </div>
-  <div>
-    {{msgApp}}
-  </div>
+
 </template>
 
 <script>
 
   export default{
+    props:['msg'],
     data(){
       return {
         query: '',
@@ -32,11 +35,11 @@
           {msg: 'asDGA'},
           {msg: 'FAKFLDKASJ'},
         ],
-        selected:'A',
-        options:[
-          {text:'One',value:'A'},
-          {text:'Two',value:'B'},
-          {text:'Three',value:'C'}
+        selected: 'A',
+        options: [
+          {text: 'One', value: 'A'},
+          {text: 'Two', value: 'B'},
+          {text: 'Three', value: 'C'}
         ]
       }
     }

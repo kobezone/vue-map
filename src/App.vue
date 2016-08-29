@@ -1,21 +1,21 @@
 <template>
 
     <mapside></mapside>
-    <map></map>
-    <!--<div class="sideRight">-->
-      <!--<comp-a></comp-a>-->
-      <!--<comp-b></comp-b>-->
-      <!--<counter></counter>-->
-    <!--</div>-->
+    <!--<map></map>-->
+    <div class="sideRight">
+      <input v-model="parentMsg">
+      <comp-a v-bind:msg="parentMsg"></comp-a>
+      <comp-b></comp-b>
+      <counter></counter>
+    </div>
 </template>
 <script>
   export default {
     data(){
       return {
-        msgApp:"这是从app.vue中来的数据"
+        parentMsg:"这是从app.vue中来的数据 父组件传的数据"
       }
     },
-    props:['msg'],
     components: {
       'Mapside':require('./components/Mapside.vue'),
       'Map':require('./components/Map.vue'),
