@@ -4,6 +4,12 @@
   <!--</div>-->
   <input v-model="msg">
   <button v-on:click="notify">分发事件</button>
+
+
+  <slot name="one"></slot>
+  <slot name="two"></slot>
+  <slot></slot>
+
 </template>
 
 <script>

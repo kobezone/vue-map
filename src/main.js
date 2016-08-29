@@ -26,9 +26,9 @@ router.map({
   }
 });
 
-router.redirect({
-  '*': '/Home'
-});
+// router.redirect({
+//   '*': '/Home'
+// });
 // router.start(App, '#app'); // TODO 此处有错误,需要排查原因
 
 /* eslint-disable no-new */

@@ -29,7 +29,7 @@
         /*从子组件向父组件传值没有成功*/
         twoWay: true,
         default:function(){
-          return "wwminaa"
+          return "CompA 组件默认的 值"
         }
       }
       // 基础类型检测 （`null` 意思是任何类型都可以）
@@ -79,7 +79,6 @@
     },
     data(){
       return {
-//        msg:{text:"",value:""},
         query: '',
         list: [
           {msg: 'Bruce Lee'},
