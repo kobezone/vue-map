@@ -57,9 +57,15 @@
 </template>
 
 <script>
-  //    var Map, TDTLayer, TDTImgLayer, TDTAnnoLayer, TDTLayer_webMercator;
-  //    var FeatureLayer, Point, SpatialReference, Extent;
-  var root = window;
+  let $parser, $Map, $on, $dom, $has, $Color, $Units, $bubblePopup, $MeasureTools, $TDTLayer, $TDTImgLayer,
+    $TDTAnnoLayer, $TDTLayer_webMercator, $SnappingManager, $HomeButton,
+    $Measurement, $OverviewMap, $LocateButton, $FeatureLayer, $GeometryService,
+    $ArcGISDynamicMapServiceLayer, $SimpleMarkerSymbol, $SimpleLineSymbol, $GraphicsLayer, $Graphic,
+    $Point, $InfoTemplate, $SpatialReference, $Extent,  $registry, $esriConfig, $query, $jsapiBundle,
+    $Editor, $TemplatePicker, $AttributeInspector, $CheckBox, $keys, $ToolbarSeparator, $JsonRest,
+    $FindTask, $FindParameters,$ArrayUtils,$SimpleFillSymbol;
+  let roadHightLightLayer;
+  let root = window;
   export default{
     props: [],
     ready(){
@@ -94,7 +100,7 @@
           "esri/InfoTemplate",
           "esri/SpatialReference",
           "esri/geometry/Extent",
-          "dojo/_base/array",
+
           "dijit/registry",
           "esri/config",
           "dojo/query",
@@ -106,6 +112,10 @@
           "dojo/keys",
           "dijit/ToolbarSeparator",
           "dojo/store/JsonRest",
+          "esri/tasks/FindTask",
+          "esri/tasks/FindParameters",
+          "dojo/_base/array",
+          "esri/symbols/SimpleFillSymbol",
           "esri/dijit/Scalebar",
           "dijit/layout/BorderContainer",
           "dijit/layout/ContentPane",
@@ -115,14 +125,27 @@
                   TDTAnnoLayer, TDTLayer_webMercator, SnappingManager, HomeButton,
                   Measurement, OverviewMap, LocateButton, FeatureLayer, GeometryService,
                   ArcGISDynamicMapServiceLayer, SimpleMarkerSymbol, SimpleLineSymbol, GraphicsLayer, Graphic,
-                  Point, InfoTemplate, SpatialReference, Extent, array, registry, esriConfig, query, jsapiBundle,
-                  Editor, TemplatePicker, AttributeInspector, CheckBox, keys, ToolbarSeparator, JsonRest) {
+                  Point, InfoTemplate, SpatialReference, Extent,  registry, esriConfig, query, jsapiBundle,
+                  Editor, TemplatePicker, AttributeInspector, CheckBox, keys, ToolbarSeparator, JsonRest,
+                  FindTask, FindParameters, ArrayUtils,SimpleFillSymbol) {
           parser.parse();
           esriConfig.defaults.io.proxyUrl = "./static/proxy/proxy.ashx";
           esriConfig.defaults.io.alwaysUseProxy = false;
           esriConfig.defaults.geometryService = new GeometryService("http://60.29.110.104:6080/arcgis/rest/services/Utilities/Geometry/GeometryServer");
+          [$parser, $Map, $on, $dom, $has, $Color, $Units, $bubblePopup, $MeasureTools, $TDTLayer, $TDTImgLayer,
+            $TDTAnnoLayer, $TDTLayer_webMercator, $SnappingManager, $HomeButton,
+            $Measurement, $OverviewMap, $LocateButton, $FeatureLayer, $GeometryService,
+            $ArcGISDynamicMapServiceLayer, $SimpleMarkerSymbol, $SimpleLineSymbol, $GraphicsLayer, $Graphic,
+            $Point, $InfoTemplate, $SpatialReference, $Extent, $registry, $esriConfig, $query, $jsapiBundle,
+            $Editor, $TemplatePicker, $AttributeInspector, $CheckBox, $keys, $ToolbarSeparator, $JsonRest,
+            $FindTask, $FindParameters, $ArrayUtils,$SimpleFillSymbol] = [parser, Map, on, dom, has, Color, Units, bubblePopup, MeasureTools, TDTLayer, TDTImgLayer,
+            TDTAnnoLayer, TDTLayer_webMercator, SnappingManager, HomeButton,
+            Measurement, OverviewMap, LocateButton, FeatureLayer, GeometryService,
+            ArcGISDynamicMapServiceLayer, SimpleMarkerSymbol, SimpleLineSymbol, GraphicsLayer, Graphic,
+            Point, InfoTemplate, SpatialReference, Extent,  registry, esriConfig, query, jsapiBundle,
+            Editor, TemplatePicker, AttributeInspector, CheckBox, keys, ToolbarSeparator, JsonRest,
+            FindTask, FindParameters, ArrayUtils,SimpleFillSymbol];
 
-          root.Map = Map;
           root.TDTLayer = new TDTLayer();
           root.TDTImgLayer = new TDTImgLayer();
           root.TDTAnnoLayer = new TDTAnnoLayer();
@@ -141,7 +164,7 @@
             fadeOnZoom: true,
             force3DTransforms: true,
             center: [117.2015, 39.1330],
-            zoom: 14,
+            zoom: 12,
             autoResize: true,
             sliderPosition: "top-left",
             // infoWindow: infoWindow,
@@ -149,12 +172,11 @@
           });
           map.addLayers([root.TDTLayer, root.TDTImgLayer, root.TDTAnnoLayer]);
 
+          root.map = map;
           root.TDTLayer.show();
           root.TDTImgLayer.hide();
           root.TDTAnnoLayer.show();
-          var tianjinRoadSHP = "http://60.29.110.104:6080/arcgis/rest/services/天津市/天津市路网矢量图/MapServer/";
-          var tianjinRoadUrl = "http://60.29.110.104:6080/arcgis/rest/services/天津市/天津市路网编辑/FeatureServer/";
-          root.tianjinRoadMapLayer = new FeatureLayer(tianjinRoadSHP + "0", {
+          root.tianjinRoadMapLayer = new FeatureLayer(self.tianjinRoadSHP + "/0", {
             mode: FeatureLayer.MODE_ONDEMAND,
             outFields: ['*'],
             id: "dynamicTianjin",
@@ -162,7 +184,7 @@
             opacity: 0.95,
             visible: true
           });
-          root.tianjinRoadLineLayer = new FeatureLayer(tianjinRoadUrl + "0", {
+          root.tianjinRoadLineLayer = new FeatureLayer(self.tianjinRoadUrl + "/0", {
             mode: FeatureLayer.MODE_ONDEMAND,
             outFields: ['*'],
             id: "tianjinRoadLineFeature",
@@ -170,7 +192,7 @@
             opacity: 1,
             visible: true
           });
-          root.tianjinRoadPolyLayer = new FeatureLayer(tianjinRoadUrl + "1", {
+          root.tianjinRoadPolyLayer = new FeatureLayer(self.tianjinRoadUrl + "/1", {
             mode: FeatureLayer.MODE_ONDEMAND,
             outFields: ['*'],
             id: "tianjinRoadPolyLayer",
@@ -180,10 +202,13 @@
           });
 
           map.addLayers([tianjinRoadMapLayer, tianjinRoadLineLayer, tianjinRoadPolyLayer]);
+
           tianjinRoadMapLayer.hide();
           tianjinRoadLineLayer.hide();
           tianjinRoadPolyLayer.hide();
           map.on("layers-add-result", addPointGraphics);
+          roadHightLightLayer = new GraphicsLayer();
+          map.addLayer(roadHightLightLayer);
           tianjinRoadMapLayer.on("click", showTianjinRoadInfo);
           tianjinRoadLineLayer.on("click", showTianjinRoadInfo);
           tianjinRoadPolyLayer.on("click", showTianjinRoadInfo);
@@ -233,6 +258,7 @@
             visible: true
           }, "HomeButton");
           home.startup();
+
           /*                        var geoLocate = new LocateButton({
            map: map
            }, "LocateButton");
@@ -244,18 +270,36 @@
           map.on('mouse-drag', showCoordinates);
           function showCoordinates(evt) {
             var mp = evt.mapPoint;
-            $("#XYinfo").html("坐标：" + mp.x.toFixed(6) + " , " + mp.y.toFixed(6));  //t
+            $("#XYinfo").html("坐标：" + mp.x.toFixed(8) + " , " + mp.y.toFixed(8));  //t
           }
         });
     },
     data(){
       return {
+        tianjinRoadSHP: "http://60.29.110.104:6080/arcgis/rest/services/天津市/天津市路网矢量图/MapServer",
+        tianjinRoadUrl: "http://60.29.110.104:6080/arcgis/rest/services/天津市/天津市路网编辑/FeatureServer",
+        //FeatureServer不能用于属性搜索
+        tianjinRoadUrlMapServer: "http://60.29.110.104:6080/arcgis/rest/services/天津市/天津市路网编辑/MapServer",
         msg: 'hello vue.',
         radioChecked: true,
         checkboxRoad: false,
         checkboxHightlight: false,
         checkboxAnno: true,
-        isOne: 0
+        isOne: 0,
+        districtLongLat: {
+          和平区: {longitude: "117.184570", latitude: "39.125082"},
+          南开区: {longitude: "117.170195", latitude: "39.104405"},
+          河西区: {longitude: "117.203046", latitude: "39.088054"},
+          河东区: {longitude: "117.232100", latitude: "39.117494"},
+          河北区: {longitude: "117.200643", latitude: "39.163221"},
+          红桥区: {longitude: "117.159230", latitude: "39.156440"},
+          东丽区: {longitude: "117.400800", latitude: "39.140647"},
+          西青区: {longitude: "117.093768", latitude: "39.035963"},
+          北辰区: {longitude: "117.121913", latitude: "39.226247"},
+          津南区: {longitude: "117.375059", latitude: "38.990569"},
+          武清区: {longitude: "117.034342", latitude: "39.379869"}
+        }
+
       }
     },
     watch: {
@@ -298,9 +342,112 @@
         }
       }
     },
+    methods: {
+      //将点平移到map正中 (并 缩放到制定map级别)
+      setMapCenter: function (e, level) {
+        var location = new Point(e.longitude, e.latitude, root.map.spatialReference);
 
-    methods: {},
-    components: {}
+        root.map.centerAt(location);  //将点平移到map正中
+//        root.map.centerAndZoom(location, level);   //将点平移到map正中 并 缩放到制定map级别
+      },
+      getDistrictRoad: function (district) {
+        let self = this;
+        let findTask = new $FindTask(self.tianjinRoadUrlMapServer);
+        let findParams = new $FindParameters();
+        findParams.returnGeometry = true;
+        findParams.layerIds = [0, 1, 2];
+        findParams.searchFields = ["UNAME", "a", "路名", "道路等级", "OBJECTID"];
+        findParams.searchText = "道";
+        findTask.execute(findParams, function (result) {
+          self.addToTable(result);
+        });
+      },
+      searchRoad: function (name) {
+        let self = this;
+        let findTask = new $FindTask(self.tianjinRoadUrlMapServer);
+        let findParams = new $FindParameters();
+        findParams.returnGeometry = true;
+        findParams.layerIds = [0, 1, 2];
+        findParams.searchFields = ["a", "路名", "道路等级"];
+        findParams.searchText = name.trim();
+        findTask.execute(findParams, function (result) {
+          self.$dispatch('searchRoadResult', result);
+        });
+      },
+      addToTable: function (result) {
+        this.$dispatch("roadFeatures", result);
+      },
+      addResultGraphic: function (feature) {
+        console.log(feature);
+        roadHightLightLayer.clear();
+        var lineSymbol = new $SimpleLineSymbol($SimpleLineSymbol.STYLE_DASH, new $Color([255, 0, 0]), 1);
+        $ArrayUtils.forEach(feature, function (rs) {
+          console.log(rs);
+          rs.feature.setSymbol(new $SimpleLineSymbol($SimpleLineSymbol.STYLE_DASH, new $Color([31, 0, 252]), 2));
+//          rs.feature.setSymbol(new $SimpleFillSymbol()
+//            .setColor(null)
+//            .setOutline(new $SimpleLineSymbol($SimpleLineSymbol.STYLE_SOLID,
+//              new $Color([255, 0, 0]), 4)));
+          roadHightLightLayer.add(rs);
+        });
+      }
+    },
+    components: {},
+    events: {
+      districtName: function (data) {
+        let self = this;
+        let districtName = data.name;
+        self.getDistrictRoad(districtName);
+        switch (districtName) {
+          case "和平区":
+            self.setMapCenter(self.districtLongLat[districtName], 10);
+            break;
+          case "南开区":
+            self.setMapCenter(self.districtLongLat[districtName], 15);
+            break;
+          case "河西区":
+            self.setMapCenter(self.districtLongLat[districtName]);
+            break;
+          case "河东区":
+            self.setMapCenter(self.districtLongLat[districtName]);
+            break;
+          case "河北区":
+            self.setMapCenter(self.districtLongLat[districtName]);
+            break;
+          case "红桥区":
+            self.setMapCenter(self.districtLongLat[districtName]);
+            break;
+          case "东丽区":
+            self.setMapCenter(self.districtLongLat[districtName]);
+            break;
+          case "西青区":
+            self.setMapCenter(self.districtLongLat[districtName]);
+            break;
+          case "北辰区":
+            self.setMapCenter(self.districtLongLat[districtName]);
+            break;
+          case "津南区":
+            self.setMapCenter(self.districtLongLat[districtName]);
+            break;
+          case "武清区":
+            self.setMapCenter(self.districtLongLat[districtName]);
+            break;
+          default:
+            break;
+        }
+      },
+      searchRoodGraphics: function (keyword) {
+        this.searchRoad(keyword);
+      },
+      zoomToFeature: function (data) {
+        let sExtent = data.feature.geometry.getExtent();
+        sExtent = sExtent.expand(3);
+        root.map.setExtent(sExtent);
+        var f=[];
+        f.push(data);
+        this.addResultGraphic(f);
+      }
+    }
   }
 </script>
 
@@ -309,7 +456,7 @@
     height: 100%;
     width: calc(100% - 300px);
     float: right;
-    position:relative;
+    position: relative;
   }
 
   #HomeButton {
@@ -317,7 +464,7 @@
     float: left;
     top: 110px;
     /*left: calc(100% - 290px);*/
-    left:20px;
+    left: 22px;
     z-index: 50;
   }
 
@@ -336,10 +483,10 @@
   }
 
   #map #XYinfo {
-    background-color: #000000;
+    background-color: transparent;
     font-weight: normal;
     font-size: smaller;
-    color: #FFFFFF;
+    color: #000000;
     position: absolute;
     padding: 2px;
     /*left: 6px;*/

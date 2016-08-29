@@ -1,14 +1,12 @@
 import Vue from 'vue'
 import App from './App'
-require('./assets/animate.css')
-import Home from './components/Home.vue'
-import TimeEntries from './components/TimeEntries.vue'
-import LogTime from './components/LogTime.vue'
 import VueRouter from 'vue-router'
 import VueResource from 'vue-resource'
 // import 'bootstrap/dist/css/bootstrap.css'
 import HomePage from './pages/HomePage'
 import GisPage from './pages/GisPage'
+
+require('./assets/animate.css');
 
 Vue.use(VueResource);
 Vue.use(VueRouter);
@@ -23,7 +21,7 @@ router.map({
   '': {
     component: HomePage
   },
-  '/gis': {
+  'gis': {
     component: GisPage
   }
 });
@@ -33,29 +31,3 @@ router.afterEach(function (transition) {
 });
 
 router.start(App, 'app');
-
-
-
-// router.map({
-//   '/Home': {
-//     component: Home
-//   },
-//   '/time-entries': {
-//     component: TimeEntries,
-//     subRoutes: {
-//       '/log-time': {
-//         component: LogTime
-//       }
-//     }
-//   }
-// });
-// router.redirect({
-//   '*': '/Home'
-// });
-// router.start(App, '#app'); // TODO 此处有错误,需要排查原因
-
-/* eslint-disable no-new */
-// new Vue({
-//   el: 'body',
-//   components: {App}
-// });

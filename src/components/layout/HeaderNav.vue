@@ -9,15 +9,15 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">交委平台</a>
+      <a class="navbar-brand" href="#">交委平台 <span style='font-size:12px'>v0.1</span></a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <li ><a v-link="'gis'">道路设施GIS</a></li>
-        <li><a href="#">检测数据</a></li>
+        <li :class="{ 'active': $route.path == '/gis'}"><a v-link="'gis'">道路设施GIS</a></li>
         <li><a href="#">资产管理</a></li>
+        <li><a href="#">检测数据</a></li>
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">日常养管 <span class="caret"></span></a>
           <ul class="dropdown-menu">
@@ -40,11 +40,11 @@
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">让你笑了 <span class="caret"></span></a>
           <ul class="dropdown-menu">
-            <li><a href="#">Action</a></li>
-            <li><a href="#">Another action</a></li>
-            <li><a href="#">Something else here</a></li>
+            <li><a href="#">查看个人信息</a></li>
+            <li><a href="#">修改密码</a></li>
+            <li><a href="#">查看我的消息</a></li>
             <li role="separator" class="divider"></li>
-            <li><a href="#">Separated link</a></li>
+            <li><a href="#">退出</a></li>
           </ul>
         </li>
       </ul>
@@ -56,9 +56,10 @@
 
 
 <style scoped>
+
     .nav-shadow {border:0;box-shadow: 1px 2px 3px rgba(0,0,0,.3);margin-bottom:0px}
 
-    .bg-primary .navbar-brand {font-size:20px;color:#fff;margin-right:120px}
+    .bg-primary .navbar-brand {font-size:24px;color:#fff;margin-right:120px}
     .bg-primary {background-color:#0265dc;}
     .bg-primary .navbar-nav>li>a {color:#fff;border-bottom:transparent solid 3px}
     .bg-primary .navbar-nav>li>a:focus, .bg-primary .navbar-nav>li>a:hover {color:#ffcc00;border-bottom:#fff solid 3px}
