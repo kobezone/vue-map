@@ -2,6 +2,7 @@
 
   <div id="map">
     <div class="btn-group" role="group" aria-label="测量工具" id="measureTools">
+      <!--<button type="button" class="btn btn-default" @click="selectRoad">选择线路</button>-->
       <button type="button" class="btn btn-default measure-distance">测量距离</button>
       <button class="btn btn-default measure-area">测量面积</button>
       <div class="btn-group" role="group">
@@ -50,7 +51,7 @@
       </div>
     </div>
     <div id="HomeButton"></div>
-    <!--<div id="LocateButton"></div>-->
+    <div id="LocateButton"></div>
     <div id="XYinfo"></div>
   </div>
 
@@ -206,7 +207,7 @@
           tianjinRoadMapLayer.hide();
           tianjinRoadLineLayer.hide();
           tianjinRoadPolyLayer.hide();
-          map.on("layers-add-result", addPointGraphics);
+//          map.on("layers-add-result", addPointGraphics);
           roadHightLightLayer = new GraphicsLayer();
           map.addLayer(roadHightLightLayer);
           tianjinRoadMapLayer.on("click", showTianjinRoadInfo);
@@ -214,6 +215,9 @@
           tianjinRoadPolyLayer.on("click", showTianjinRoadInfo);
           function showTianjinRoadInfo(evt) {
             console.log(evt);
+            let f=evt;
+            f.feature=evt.graphic;
+            self.$dispatch('road-selected',f)
           }
 
           var dynamicPointLayer = new GraphicsLayer({id: "dynamicPointLayer"});
@@ -259,10 +263,10 @@
           }, "HomeButton");
           home.startup();
 
-          /*                        var geoLocate = new LocateButton({
-           map: map
-           }, "LocateButton");
-           geoLocate.startup();*/
+//          var geoLocate = new LocateButton({
+//            map: map
+//          }, "LocateButton");
+//          geoLocate.startup();
           var measureTool = new MeasureTools({
             map: map
           }, "measureTools");
@@ -343,6 +347,9 @@
       }
     },
     methods: {
+      selectRoad:function(){
+        // TODO 根据范围手动选择道路
+      },
       //将点平移到map正中 (并 缩放到制定map级别)
       setMapCenter: function (e, level) {
         var location = new Point(e.longitude, e.latitude, root.map.spatialReference);
@@ -378,17 +385,18 @@
         this.$dispatch("roadFeatures", result);
       },
       addResultGraphic: function (feature) {
-        console.log(feature);
         roadHightLightLayer.clear();
-        var lineSymbol = new $SimpleLineSymbol($SimpleLineSymbol.STYLE_DASH, new $Color([255, 0, 0]), 1);
+//        console.log(feature);
+//        var lineSymbol = new $SimpleLineSymbol($SimpleLineSymbol.STYLE_DASH, new $Color([255, 0, 0]), 5);
         $ArrayUtils.forEach(feature, function (rs) {
-          console.log(rs);
-          rs.feature.setSymbol(new $SimpleLineSymbol($SimpleLineSymbol.STYLE_DASH, new $Color([31, 0, 252]), 2));
+//          console.log(rs.feature);
+//          rs.feature.setSymbol(lineSymbol);
+          rs.feature.setSymbol(new $SimpleLineSymbol($SimpleLineSymbol.STYLE_DASH, new $Color([31, 0, 252]), 6));
 //          rs.feature.setSymbol(new $SimpleFillSymbol()
 //            .setColor(null)
 //            .setOutline(new $SimpleLineSymbol($SimpleLineSymbol.STYLE_SOLID,
 //              new $Color([255, 0, 0]), 4)));
-          roadHightLightLayer.add(rs);
+          roadHightLightLayer.add(rs.feature);
         });
       }
     },
@@ -443,7 +451,7 @@
         let sExtent = data.feature.geometry.getExtent();
         sExtent = sExtent.expand(3);
         root.map.setExtent(sExtent);
-        var f=[];
+        let f=[];
         f.push(data);
         this.addResultGraphic(f);
       }
@@ -493,5 +501,7 @@
     bottom: 1px;
     z-index: 2;
   }
-
+  ul li label{
+    padding-left:16px;
+  }
 </style>

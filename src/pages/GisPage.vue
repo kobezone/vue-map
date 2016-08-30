@@ -46,21 +46,33 @@
         this.currentSelectedRoad = {};
         this.currentSelectedDistrict = district;
 
-        this.$broadcast("districtName", district);
-
         this.toggleBottom();
+        this.$broadcast("districtName", district);
       },
       hideBottomWrap: function () {
         this.showBottomWrap = false;
       },
       onRoadClick: function (road) {
         this.currentSelectedRoad = road;
+
+        this.toggleBottom();
         this.$broadcast('zoomToFeature', road);
+      },
+      backToRoadsList:function(){
+        this.currentSelectedRoad={};
         this.toggleBottom();
       },
       isEmpty: function (value) {
         return (Array.isArray(value) && value.length === 0)
           || (Object.prototype.isPrototypeOf(value) && Object.keys(value).length === 0);
+      },
+      mainRoad:function (a, b, c) {
+//        console.log(a);
+//        console.log(b);
+//        console.log(c);
+        if(a.feature.attributes['道路等级']=="支路"){
+//          return a;
+        }
       }
     },
 
@@ -79,6 +91,7 @@
     },
     events: {
       'road-selected': function (road) {
+        console.log(road);
         this.onRoadClick(road);
       },
       roadFeatures: function (roads) {
@@ -198,11 +211,11 @@
       </div>
       <div id="road-body" v-if="!isEmpty(currentSelectedRoad)">
         <div class="body-header">
-          <button class="btn btn-default btn-info" @click="onDistrictClick(currentSelectedDistrict)"
-                  v-show="currentSelectedDistrict">
+          <button class="btn btn-default btn-info"
+                  v-show="currentSelectedDistrict" @click="backToRoadsList">
             <span class="glyphicon glyphicon-chevron-left"></span>
           </button>
-          <span class='text'>{{currentSelectedRoad.name}}</span>
+          <span class='text'>{{currentSelectedRoad.feature.attributes['路名']}}</span>
           <div class='pull-right'>
             <button class="btn btn-default" @click="showCrossSection()">
               <span class="glyphicon glyphicon-eye-close"></span> 查看横断面

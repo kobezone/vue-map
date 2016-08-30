@@ -1,9 +1,11 @@
-<template>
+<template xmlns:v-on="http://www.w3.org/1999/xhtml">
   <div class='search-wrapper'>
     <div class="form-group keyword">
       <label class="sr-only" for="exampleInputAmount">输入关键字</label>
       <div class="input-group">
-        <input type="text" class="form-control" id="exampleInputAmount" placeholder="输入关键字" v-model="keyword">
+        <input type="text" class="form-control" id="exampleInputAmount" placeholder="输入关键字"
+               v-on:keyup.enter="search()"
+               v-model="keyword">
         <div class="input-group-addon btn" @click="search()">
           搜索
         </div>
