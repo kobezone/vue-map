@@ -214,7 +214,6 @@
           tianjinRoadLineLayer.on("click", showTianjinRoadInfo);
           tianjinRoadPolyLayer.on("click", showTianjinRoadInfo);
           function showTianjinRoadInfo(evt) {
-            console.log(evt);
             let f=evt;
             f.feature=evt.graphic;
             self.$dispatch('road-selected',f)
@@ -358,18 +357,20 @@
 //        root.map.centerAndZoom(location, level);   //将点平移到map正中 并 缩放到制定map级别
       },
       getDistrictRoad: function (district) {
+        roadHightLightLayer.clear();
         let self = this;
         let findTask = new $FindTask(self.tianjinRoadUrlMapServer);
         let findParams = new $FindParameters();
         findParams.returnGeometry = true;
         findParams.layerIds = [0, 1, 2];
-        findParams.searchFields = ["UNAME", "a", "路名", "道路等级", "OBJECTID"];
-        findParams.searchText = "道";
+        findParams.searchFields = ["UNAME", "a", "路名", "道路等级"];
+        findParams.searchText = "路";
         findTask.execute(findParams, function (result) {
           self.addToTable(result);
         });
       },
       searchRoad: function (name) {
+        roadHightLightLayer.clear();
         let self = this;
         let findTask = new $FindTask(self.tianjinRoadUrlMapServer);
         let findParams = new $FindParameters();
@@ -386,16 +387,9 @@
       },
       addResultGraphic: function (feature) {
         roadHightLightLayer.clear();
-//        console.log(feature);
-//        var lineSymbol = new $SimpleLineSymbol($SimpleLineSymbol.STYLE_DASH, new $Color([255, 0, 0]), 5);
+        var lineSymbol = new $SimpleLineSymbol($SimpleLineSymbol.STYLE_DASH, new $Color([31, 0, 252]), 6);
         $ArrayUtils.forEach(feature, function (rs) {
-//          console.log(rs.feature);
-//          rs.feature.setSymbol(lineSymbol);
-          rs.feature.setSymbol(new $SimpleLineSymbol($SimpleLineSymbol.STYLE_DASH, new $Color([31, 0, 252]), 6));
-//          rs.feature.setSymbol(new $SimpleFillSymbol()
-//            .setColor(null)
-//            .setOutline(new $SimpleLineSymbol($SimpleLineSymbol.STYLE_SOLID,
-//              new $Color([255, 0, 0]), 4)));
+          rs.feature.setSymbol(lineSymbol);
           roadHightLightLayer.add(rs.feature);
         });
       }
@@ -408,10 +402,10 @@
         self.getDistrictRoad(districtName);
         switch (districtName) {
           case "和平区":
-            self.setMapCenter(self.districtLongLat[districtName], 10);
+            self.setMapCenter(self.districtLongLat[districtName]);
             break;
           case "南开区":
-            self.setMapCenter(self.districtLongLat[districtName], 15);
+            self.setMapCenter(self.districtLongLat[districtName]);
             break;
           case "河西区":
             self.setMapCenter(self.districtLongLat[districtName]);
@@ -454,6 +448,9 @@
         let f=[];
         f.push(data);
         this.addResultGraphic(f);
+      },
+      clearLayers:function () {
+        roadHightLightLayer.clear();
       }
     }
   }

@@ -40,6 +40,7 @@
         loading: false
       }
     },
+
     methods: {
       search: function () {
         if (this.keyword == "") return;

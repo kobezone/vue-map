@@ -15,12 +15,7 @@
           {name: "河西区"},
           {name: "河东区"},
           {name: "河北区"},
-          {name: "红桥区"},
-          {name: "东丽区"},
-          {name: "西青区"},
-          {name: "北辰区"},
-          {name: "津南区"},
-          {name: "武清区"}
+          {name: "红桥区"}
         ],
         roads: {},
         /**选中的道路类别 */
@@ -50,6 +45,7 @@
         this.$broadcast("districtName", district);
       },
       hideBottomWrap: function () {
+        this.$broadcast('clearLayers');
         this.showBottomWrap = false;
       },
       onRoadClick: function (road) {
@@ -67,13 +63,14 @@
           || (Object.prototype.isPrototypeOf(value) && Object.keys(value).length === 0);
       },
       mainRoad:function (a, b, c) {
-//        console.log(a);
-//        console.log(b);
-//        console.log(c);
         if(a.feature.attributes['道路等级']=="支路"){
 //          return a;
         }
+      },
+      showCrossSection: function () {
+        $('#road-cross-section-modal').modal('show');
       }
+
     },
 
     ready(){
@@ -91,7 +88,6 @@
     },
     events: {
       'road-selected': function (road) {
-        console.log(road);
         this.onRoadClick(road);
       },
       roadFeatures: function (roads) {
@@ -332,6 +328,27 @@
       </div>
     </div>
   </div>
+  <div class="modal fade " id="road-cross-section-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="exampleModalLabel">{{currentSelectedRoad.name}} 道路横断面</h4>
+        </div>
+        <div class="modal-body">
+          <div style="overflow:auto">
+            <img src="../assets/road-cross-section.jpg">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary">导出</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
 </template>
 
 
@@ -393,10 +410,13 @@
   #left-wrapper .tab-content .list-group-item:focus {
     outline: 0
   }
-
+  #left-wrapper .roadtype-checkboxgroup {
+    background-color:#eee
+  }
   #left-wrapper .roadtype-checkboxgroup p {
     margin: 0;
-    padding: 5px
+    padding: 5px;
+    padding-left:16px
   }
 
   #left-wrapper .roadtype-checkboxgroup .title {
