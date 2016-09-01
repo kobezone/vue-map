@@ -5,17 +5,16 @@
 <script>
   import HeaderNav from './components/layout/HeaderNav'
   export default {
+    ready(){
+    },
     data(){
-      return {
-      }
+      return {}
     },
-    methods: {
-    },
+    methods: {},
     components: {
       HeaderNav
     },
-    events: {
-    }
+    events: {}
   }
 </script>
 
@@ -30,7 +29,7 @@
     /*display: flex;
   align-items: center;
   justify-content: center;*/
-    font-family: "Microsoft YaHei" ,  Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-family: "Microsoft YaHei", Helvetica Neue, Helvetica, Arial, sans-serif;
     height: 100%;
   }
 
@@ -41,7 +40,7 @@
   }
 
   #app-wrapper {
-    padding-top:50px
+    padding-top: 50px
   }
 
   #app a {

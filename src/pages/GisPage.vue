@@ -110,9 +110,6 @@
 
 <template>
   <div id="map-wrapper">
-    <!--地图-->
-    <!--<div id="map-content">-->
-    <!--</div>-->
     <map></map>
     <div id="left-wrapper">
       <div class="maincontent">
@@ -194,7 +191,7 @@
                   <th>路面面积 (平方米)</th>
                 </tr>
                 <tr v-for="r in roads" @click="onRoadClick(r)" :class="{'info' : r == currentSelectedRoad}">
-                  <td>{{$index}}</td>
+                  <td>{{$index+1}}</td>
                   <td>{{r.feature.attributes["路名"]}}</td>
                   <td>{{r.feature.attributes["路面长度"]}}</td>
                   <td>{{r.feature.attributes["路面一般宽度"]}}</td>
@@ -357,10 +354,6 @@
     height: 100%;
     position: relative;
     overflow: hidden
-  }
-
-  #map-content {
-    height: 100%
   }
 
   #left-wrapper {

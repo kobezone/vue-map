@@ -15,7 +15,7 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <li :class="{ 'active': $route.path == '/gis'}"><a v-link="'gis'">道路设施GIS</a></li>
+        <li :class="{ 'active': $route.path == '/gis'}"><a v-link="{ path: 'gis' }">道路设施GIS</a></li>
         <li><a href="#">资产管理</a></li>
         <li><a href="#">检测数据</a></li>
         <li class="dropdown">

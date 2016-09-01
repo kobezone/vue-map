@@ -62,9 +62,9 @@
     $TDTAnnoLayer, $TDTLayer_webMercator, $SnappingManager, $HomeButton,
     $Measurement, $OverviewMap, $LocateButton, $FeatureLayer, $GeometryService,
     $ArcGISDynamicMapServiceLayer, $SimpleMarkerSymbol, $SimpleLineSymbol, $GraphicsLayer, $Graphic,
-    $Point, $InfoTemplate, $SpatialReference, $Extent,  $registry, $esriConfig, $query, $jsapiBundle,
+    $Point, $InfoTemplate, $SpatialReference, $Extent, $registry, $esriConfig, $query, $jsapiBundle,
     $Editor, $TemplatePicker, $AttributeInspector, $CheckBox, $keys, $ToolbarSeparator, $JsonRest,
-    $FindTask, $FindParameters,$ArrayUtils,$SimpleFillSymbol;
+    $FindTask, $FindParameters, $ArrayUtils, $SimpleFillSymbol, $webMercatorUtils;
   let roadHightLightLayer;
   let root = window;
   export default{
@@ -117,6 +117,7 @@
           "esri/tasks/FindParameters",
           "dojo/_base/array",
           "esri/symbols/SimpleFillSymbol",
+          "esri/geometry/webMercatorUtils",
           "esri/dijit/Scalebar",
           "dijit/layout/BorderContainer",
           "dijit/layout/ContentPane",
@@ -126,9 +127,9 @@
                   TDTAnnoLayer, TDTLayer_webMercator, SnappingManager, HomeButton,
                   Measurement, OverviewMap, LocateButton, FeatureLayer, GeometryService,
                   ArcGISDynamicMapServiceLayer, SimpleMarkerSymbol, SimpleLineSymbol, GraphicsLayer, Graphic,
-                  Point, InfoTemplate, SpatialReference, Extent,  registry, esriConfig, query, jsapiBundle,
+                  Point, InfoTemplate, SpatialReference, Extent, registry, esriConfig, query, jsapiBundle,
                   Editor, TemplatePicker, AttributeInspector, CheckBox, keys, ToolbarSeparator, JsonRest,
-                  FindTask, FindParameters, ArrayUtils,SimpleFillSymbol) {
+                  FindTask, FindParameters, ArrayUtils, SimpleFillSymbol, webMercatorUtils) {
           parser.parse();
           esriConfig.defaults.io.proxyUrl = "./static/proxy/proxy.ashx";
           esriConfig.defaults.io.alwaysUseProxy = false;
@@ -139,13 +140,13 @@
             $ArcGISDynamicMapServiceLayer, $SimpleMarkerSymbol, $SimpleLineSymbol, $GraphicsLayer, $Graphic,
             $Point, $InfoTemplate, $SpatialReference, $Extent, $registry, $esriConfig, $query, $jsapiBundle,
             $Editor, $TemplatePicker, $AttributeInspector, $CheckBox, $keys, $ToolbarSeparator, $JsonRest,
-            $FindTask, $FindParameters, $ArrayUtils,$SimpleFillSymbol] = [parser, Map, on, dom, has, Color, Units, bubblePopup, MeasureTools, TDTLayer, TDTImgLayer,
+            $FindTask, $FindParameters, $ArrayUtils, $SimpleFillSymbol, $webMercatorUtils] = [parser, Map, on, dom, has, Color, Units, bubblePopup, MeasureTools, TDTLayer, TDTImgLayer,
             TDTAnnoLayer, TDTLayer_webMercator, SnappingManager, HomeButton,
             Measurement, OverviewMap, LocateButton, FeatureLayer, GeometryService,
             ArcGISDynamicMapServiceLayer, SimpleMarkerSymbol, SimpleLineSymbol, GraphicsLayer, Graphic,
-            Point, InfoTemplate, SpatialReference, Extent,  registry, esriConfig, query, jsapiBundle,
+            Point, InfoTemplate, SpatialReference, Extent, registry, esriConfig, query, jsapiBundle,
             Editor, TemplatePicker, AttributeInspector, CheckBox, keys, ToolbarSeparator, JsonRest,
-            FindTask, FindParameters, ArrayUtils,SimpleFillSymbol];
+            FindTask, FindParameters, ArrayUtils, SimpleFillSymbol, webMercatorUtils];
 
           root.TDTLayer = new TDTLayer();
           root.TDTImgLayer = new TDTImgLayer();
@@ -214,9 +215,11 @@
           tianjinRoadLineLayer.on("click", showTianjinRoadInfo);
           tianjinRoadPolyLayer.on("click", showTianjinRoadInfo);
           function showTianjinRoadInfo(evt) {
-            let f=evt;
-            f.feature=evt.graphic;
-            self.$dispatch('road-selected',f)
+//            console.log(evt.graphic.attributes.NAME);
+//            console.log(JSON.stringify(evt.graphic.geometry.rings[0]));
+            let f = evt;
+            f.feature = evt.graphic;
+            self.$dispatch('road-selected', f)
           }
 
           var dynamicPointLayer = new GraphicsLayer({id: "dynamicPointLayer"});
@@ -346,7 +349,7 @@
       }
     },
     methods: {
-      selectRoad:function(){
+      selectRoad: function () {
         // TODO 根据范围手动选择道路
       },
       //将点平移到map正中 (并 缩放到制定map级别)
@@ -354,7 +357,7 @@
         var location = new Point(e.longitude, e.latitude, root.map.spatialReference);
 
         root.map.centerAt(location);  //将点平移到map正中
-//        root.map.centerAndZoom(location, level);   //将点平移到map正中 并 缩放到制定map级别
+        //root.map.centerAndZoom(location, level);   //将点平移到map正中 并 缩放到制定map级别
       },
       getDistrictRoad: function (district) {
         roadHightLightLayer.clear();
@@ -366,6 +369,7 @@
         findParams.searchFields = ["UNAME", "a", "路名", "道路等级"];
         findParams.searchText = "路";
         findTask.execute(findParams, function (result) {
+          sessionStorage.roadData = JSON.stringify(result);
           self.addToTable(result);
         });
       },
@@ -386,12 +390,22 @@
         this.$dispatch("roadFeatures", result);
       },
       addResultGraphic: function (feature) {
+        let self=this;
         roadHightLightLayer.clear();
         var lineSymbol = new $SimpleLineSymbol($SimpleLineSymbol.STYLE_DASH, new $Color([31, 0, 252]), 6);
         $ArrayUtils.forEach(feature, function (rs) {
-          rs.feature.setSymbol(lineSymbol);
-          roadHightLightLayer.add(rs.feature);
+          let f=rs.feature;
+          if(f.geometry.spatialReference.wkid !=undefined && f.geometry.spatialReference.wkid != 4326){
+            f.geometry=self.webMercatorToGeographic(f);
+          }
+          f.setSymbol(lineSymbol);
+          roadHightLightLayer.add(f);
         });
+      },
+      webMercatorToGeographic: function (rs) {
+        let f=$webMercatorUtils.webMercatorToGeographic(rs.geometry); //用此方法转换坐标系
+        //$webMercatorUtils.xyToLngLat(e[0],e[1])  //用此方法转化坐标
+        return f;
       }
     },
     components: {},
@@ -443,15 +457,19 @@
       },
       zoomToFeature: function (data) {
         let sExtent = data.feature.geometry.getExtent();
-        sExtent = sExtent.expand(3);
+        sExtent = sExtent.expand(2);
         root.map.setExtent(sExtent);
-        let f=[];
+        let f = [];
         f.push(data);
         this.addResultGraphic(f);
       },
-      clearLayers:function () {
+      clearLayers: function () {
         roadHightLightLayer.clear();
       }
+    },
+    destroyed(){
+      sessionStorage.removeItem("roadData");
+      sessionStorage.removeItem("roadFeature");
     }
   }
 </script>
@@ -498,7 +516,8 @@
     bottom: 1px;
     z-index: 2;
   }
-  ul li label{
-    padding-left:16px;
+
+  ul li label {
+    padding-left: 16px;
   }
 </style>
