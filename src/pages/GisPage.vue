@@ -62,11 +62,6 @@
         return (Array.isArray(value) && value.length === 0)
           || (Object.prototype.isPrototypeOf(value) && Object.keys(value).length === 0);
       },
-      mainRoad:function (a, b, c) {
-        if(a.feature.attributes['道路等级']=="支路"){
-//          return a;
-        }
-      },
       showCrossSection: function () {
         $('#road-cross-section-modal').modal('show');
       }

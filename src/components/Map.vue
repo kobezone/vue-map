@@ -62,10 +62,10 @@
     $TDTAnnoLayer, $TDTLayer_webMercator, $SnappingManager, $HomeButton,
     $Measurement, $OverviewMap, $LocateButton, $FeatureLayer, $GeometryService,
     $ArcGISDynamicMapServiceLayer, $SimpleMarkerSymbol, $SimpleLineSymbol, $GraphicsLayer, $Graphic,
-    $Point, $InfoTemplate, $SpatialReference, $Extent, $registry, $esriConfig, $query, $jsapiBundle,
+    $Point, $Polygon, $InfoTemplate, $SpatialReference, $Extent, $registry, $esriConfig, $query, $jsapiBundle,
     $Editor, $TemplatePicker, $AttributeInspector, $CheckBox, $keys, $ToolbarSeparator, $JsonRest,
     $FindTask, $FindParameters, $ArrayUtils, $SimpleFillSymbol, $webMercatorUtils;
-  let roadHightLightLayer;
+  let roadHighLightLayer, boundaryHighLightLayer ,regionHighLightLayer;
   let root = window;
   export default{
     props: [],
@@ -98,6 +98,7 @@
           "esri/layers/GraphicsLayer",
           "esri/graphic",
           "esri/geometry/Point",
+          "esri/geometry/Polygon",
           "esri/InfoTemplate",
           "esri/SpatialReference",
           "esri/geometry/Extent",
@@ -127,7 +128,7 @@
                   TDTAnnoLayer, TDTLayer_webMercator, SnappingManager, HomeButton,
                   Measurement, OverviewMap, LocateButton, FeatureLayer, GeometryService,
                   ArcGISDynamicMapServiceLayer, SimpleMarkerSymbol, SimpleLineSymbol, GraphicsLayer, Graphic,
-                  Point, InfoTemplate, SpatialReference, Extent, registry, esriConfig, query, jsapiBundle,
+                  Point, Polygon, InfoTemplate, SpatialReference, Extent, registry, esriConfig, query, jsapiBundle,
                   Editor, TemplatePicker, AttributeInspector, CheckBox, keys, ToolbarSeparator, JsonRest,
                   FindTask, FindParameters, ArrayUtils, SimpleFillSymbol, webMercatorUtils) {
           parser.parse();
@@ -138,13 +139,13 @@
             $TDTAnnoLayer, $TDTLayer_webMercator, $SnappingManager, $HomeButton,
             $Measurement, $OverviewMap, $LocateButton, $FeatureLayer, $GeometryService,
             $ArcGISDynamicMapServiceLayer, $SimpleMarkerSymbol, $SimpleLineSymbol, $GraphicsLayer, $Graphic,
-            $Point, $InfoTemplate, $SpatialReference, $Extent, $registry, $esriConfig, $query, $jsapiBundle,
+            $Point, $Polygon, $InfoTemplate, $SpatialReference, $Extent, $registry, $esriConfig, $query, $jsapiBundle,
             $Editor, $TemplatePicker, $AttributeInspector, $CheckBox, $keys, $ToolbarSeparator, $JsonRest,
             $FindTask, $FindParameters, $ArrayUtils, $SimpleFillSymbol, $webMercatorUtils] = [parser, Map, on, dom, has, Color, Units, bubblePopup, MeasureTools, TDTLayer, TDTImgLayer,
             TDTAnnoLayer, TDTLayer_webMercator, SnappingManager, HomeButton,
             Measurement, OverviewMap, LocateButton, FeatureLayer, GeometryService,
             ArcGISDynamicMapServiceLayer, SimpleMarkerSymbol, SimpleLineSymbol, GraphicsLayer, Graphic,
-            Point, InfoTemplate, SpatialReference, Extent, registry, esriConfig, query, jsapiBundle,
+            Point, Polygon, InfoTemplate, SpatialReference, Extent, registry, esriConfig, query, jsapiBundle,
             Editor, TemplatePicker, AttributeInspector, CheckBox, keys, ToolbarSeparator, JsonRest,
             FindTask, FindParameters, ArrayUtils, SimpleFillSymbol, webMercatorUtils];
 
@@ -178,7 +179,7 @@
           root.TDTLayer.show();
           root.TDTImgLayer.hide();
           root.TDTAnnoLayer.show();
-          root.tianjinRoadMapLayer = new FeatureLayer(self.tianjinRoadSHP + "/0", {
+          root.tianjinRoadMapLayer = new FeatureLayer(self.tianjinRoadSHP + "/1", {
             mode: FeatureLayer.MODE_ONDEMAND,
             outFields: ['*'],
             id: "dynamicTianjin",
@@ -208,15 +209,19 @@
           tianjinRoadMapLayer.hide();
           tianjinRoadLineLayer.hide();
           tianjinRoadPolyLayer.hide();
-//          map.on("layers-add-result", addPointGraphics);
-          roadHightLightLayer = new GraphicsLayer();
-          map.addLayer(roadHightLightLayer);
+          map.on("layers-add-result", addPointGraphics);
+          map.on("layers-add-result", self.searchRegion);
+          roadHighLightLayer = new GraphicsLayer();
+          map.addLayer(roadHighLightLayer);
+          boundaryHighLightLayer = new GraphicsLayer();
+          map.addLayer(boundaryHighLightLayer);
+          regionHighLightLayer=new GraphicsLayer();
+          map.addLayer(regionHighLightLayer);
+
           tianjinRoadMapLayer.on("click", showTianjinRoadInfo);
           tianjinRoadLineLayer.on("click", showTianjinRoadInfo);
           tianjinRoadPolyLayer.on("click", showTianjinRoadInfo);
           function showTianjinRoadInfo(evt) {
-//            console.log(evt.graphic.attributes.NAME);
-//            console.log(JSON.stringify(evt.graphic.geometry.rings[0]));
             let f = evt;
             f.feature = evt.graphic;
             self.$dispatch('road-selected', f)
@@ -226,7 +231,7 @@
           map.addLayer(dynamicPointLayer);
 
           function addPointGraphics() {
-            var store = new JsonRest({target: "./static/data/points.json"});
+            var store = new JsonRest({target: "static/data/points.json"});
             store.query({ID: "*"}).then(function (result, request) {
               var items = result.items;
               for (var i = 0, il = items.length; i < il; i++) {
@@ -265,10 +270,10 @@
           }, "HomeButton");
           home.startup();
 
-//          var geoLocate = new LocateButton({
-//            map: map
-//          }, "LocateButton");
-//          geoLocate.startup();
+          /*var geoLocate = new LocateButton({
+           map: map
+           }, "LocateButton");
+           geoLocate.startup();*/
           var measureTool = new MeasureTools({
             map: map
           }, "measureTools");
@@ -304,8 +309,9 @@
           北辰区: {longitude: "117.121913", latitude: "39.226247"},
           津南区: {longitude: "117.375059", latitude: "38.990569"},
           武清区: {longitude: "117.034342", latitude: "39.379869"}
-        }
-
+        },
+        allRegion: [],
+        roadHedong:{}
       }
     },
     watch: {
@@ -349,18 +355,22 @@
       }
     },
     methods: {
-      selectRoad: function () {
+      handSelectRoad: function () {
         // TODO 根据范围手动选择道路
       },
       //将点平移到map正中 (并 缩放到制定map级别)
       setMapCenter: function (e, level) {
         var location = new Point(e.longitude, e.latitude, root.map.spatialReference);
 
-        root.map.centerAt(location);  //将点平移到map正中
+        //  root.map.centerAt(location);  //将点平移到map正中
         //root.map.centerAndZoom(location, level);   //将点平移到map正中 并 缩放到制定map级别
       },
       getDistrictRoad: function (district) {
-        roadHightLightLayer.clear();
+        roadHighLightLayer.clear();
+        if(this.roadHedong != undefined && !this.isEmpty(this.roadHedong)){
+          this.addToTable(this.roadHedong);
+          return ;
+        }
         let self = this;
         let findTask = new $FindTask(self.tianjinRoadUrlMapServer);
         let findParams = new $FindParameters();
@@ -369,12 +379,13 @@
         findParams.searchFields = ["UNAME", "a", "路名", "道路等级"];
         findParams.searchText = "路";
         findTask.execute(findParams, function (result) {
+          self.roadHedong=result;
           sessionStorage.roadData = JSON.stringify(result);
           self.addToTable(result);
         });
       },
       searchRoad: function (name) {
-        roadHightLightLayer.clear();
+        roadHighLightLayer.clear();
         let self = this;
         let findTask = new $FindTask(self.tianjinRoadUrlMapServer);
         let findParams = new $FindParameters();
@@ -386,71 +397,81 @@
           self.$dispatch('searchRoadResult', result);
         });
       },
+      searchRegion: function (name) {
+        if(this.allRegion.length>0){
+          return;
+        }
+        let self = this;
+        let findTask = new $FindTask(self.tianjinRoadSHP);
+        let findParams = new $FindParameters();
+        findParams.returnGeometry = true;
+        findParams.layerIds = [0];
+        findParams.searchFields = ['name'];
+        findParams.searchText = "区";
+        findTask.execute(findParams, function (result) {
+          self.allRegion = result;
+          sessionStorage.region = JSON.stringify(result);
+        })
+      },
+      zoomToRegion:function (districtName) {
+        let self=this;
+        for(let i=0,il=this.allRegion.length;i<il;i++){
+          if(this.allRegion[i].value==districtName){
+            let geometry=this.allRegion[i];
+            let sExtent=geometry.feature.geometry.getExtent();
+            sExtent=sExtent.expand(2);
+            root.map.setExtent(sExtent);
+            let f=[];
+            f.push(geometry);
+            this.addRegionGraphic(f);
+          }
+        }
+      },
       addToTable: function (result) {
         this.$dispatch("roadFeatures", result);
       },
-      addResultGraphic: function (feature) {
-        let self=this;
-        roadHightLightLayer.clear();
+      addRoadGraphic: function (feature) {
+        let self = this;
+        roadHighLightLayer.clear();
         var lineSymbol = new $SimpleLineSymbol($SimpleLineSymbol.STYLE_DASH, new $Color([31, 0, 252]), 6);
         $ArrayUtils.forEach(feature, function (rs) {
-          let f=rs.feature;
-          if(f.geometry.spatialReference.wkid !=undefined && f.geometry.spatialReference.wkid != 4326){
-            f.geometry=self.webMercatorToGeographic(f);
+          let f = rs.feature;
+          if (f.geometry.spatialReference.wkid != undefined && f.geometry.spatialReference.wkid != 4326) {
+            f.geometry = self.webMercatorToGeographic(f);
           }
           f.setSymbol(lineSymbol);
-          roadHightLightLayer.add(f);
+          roadHighLightLayer.add(f);
+        });
+      },
+      addRegionGraphic:function(feature){
+        let self = this;
+        regionHighLightLayer.clear();
+        var lineSymbol = new $SimpleLineSymbol($SimpleLineSymbol.STYLE_DASH, new $Color([252,0,111]), 4);
+        $ArrayUtils.forEach(feature, function (rs) {
+          let f = rs.feature;
+          if (f.geometry.spatialReference.wkid != undefined && f.geometry.spatialReference.wkid != 4326) {
+            f.geometry = self.webMercatorToGeographic(f);
+          }
+          f.setSymbol(lineSymbol); //将polygon的symbol设定为lineSymbol 也是可以的
+          regionHighLightLayer.add(f);
         });
       },
       webMercatorToGeographic: function (rs) {
-        let f=$webMercatorUtils.webMercatorToGeographic(rs.geometry); //用此方法转换坐标系
+        //$webMercatorUtils.webMercatorToGeographic(rs.geometry); //用此方法转换坐标系
         //$webMercatorUtils.xyToLngLat(e[0],e[1])  //用此方法转化坐标
-        return f;
-      }
+        return $webMercatorUtils.webMercatorToGeographic(rs.geometry);
+      },
+      isEmpty: function (value) {
+        return (Array.isArray(value) && value.length === 0)
+          || (Object.prototype.isPrototypeOf(value) && Object.keys(value).length === 0);
+      },
     },
     components: {},
     events: {
       districtName: function (data) {
-        let self = this;
         let districtName = data.name;
-        self.getDistrictRoad(districtName);
-        switch (districtName) {
-          case "和平区":
-            self.setMapCenter(self.districtLongLat[districtName]);
-            break;
-          case "南开区":
-            self.setMapCenter(self.districtLongLat[districtName]);
-            break;
-          case "河西区":
-            self.setMapCenter(self.districtLongLat[districtName]);
-            break;
-          case "河东区":
-            self.setMapCenter(self.districtLongLat[districtName]);
-            break;
-          case "河北区":
-            self.setMapCenter(self.districtLongLat[districtName]);
-            break;
-          case "红桥区":
-            self.setMapCenter(self.districtLongLat[districtName]);
-            break;
-          case "东丽区":
-            self.setMapCenter(self.districtLongLat[districtName]);
-            break;
-          case "西青区":
-            self.setMapCenter(self.districtLongLat[districtName]);
-            break;
-          case "北辰区":
-            self.setMapCenter(self.districtLongLat[districtName]);
-            break;
-          case "津南区":
-            self.setMapCenter(self.districtLongLat[districtName]);
-            break;
-          case "武清区":
-            self.setMapCenter(self.districtLongLat[districtName]);
-            break;
-          default:
-            break;
-        }
+        this.getDistrictRoad(districtName);
+        this.zoomToRegion(districtName);
       },
       searchRoodGraphics: function (keyword) {
         this.searchRoad(keyword);
@@ -461,15 +482,20 @@
         root.map.setExtent(sExtent);
         let f = [];
         f.push(data);
-        this.addResultGraphic(f);
+        this.addRoadGraphic(f);
       },
       clearLayers: function () {
-        roadHightLightLayer.clear();
+        roadHighLightLayer.clear();
+        regionHighLightLayer.clear();
       }
     },
     destroyed(){
+      console.log("销毁seesionStore");
       sessionStorage.removeItem("roadData");
       sessionStorage.removeItem("roadFeature");
+      sessionStorage.removeItem("region");
+      sessionStorage.removeItem("tianjinBoundary");
+      sessionStorage.removeItem("toLngLat");
     }
   }
 </script>

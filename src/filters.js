@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 import utils from  './libs/utils'
 
@@ -13,7 +13,7 @@ exports.getLastTimeStr = (time, friendly) => {
     } else {
         return utils.fmtDate(new Date(time),'yyyy-MM-dd hh:mm');
     }
-}
+};
 
 /** 获取文字标签
  *  @param {string} tab Tab分类
@@ -43,7 +43,7 @@ exports.getTabStr = (tab, good, top) => {
         }
     }
     return str;
-}
+};
 
 /** 获取标签样式
  *  @param {string} tab Tab分类
@@ -74,7 +74,7 @@ exports.getTabClassName = (tab, good, top) => {
         }
     }
     return className;
-}
+};
 
 /** 获取title文字
  *  @param {string} tab Tab分类
@@ -99,4 +99,5 @@ exports.getTitleStr = tab => {
             break;
     }
     return str;
-}
+};
+
