@@ -1,7 +1,19 @@
 <template>
 
   <div id="map">
+
     <div class="btn-group" role="group" aria-label="测量工具" id="measureTools">
+      <div class="btn-group">
+        <button type="button" class="btn btn-default"  @click="handSelectRoad">{{drawSelect.name}}</button>
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+          <span class="caret"></span>
+          <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+          <li class="dropdown-header">选择方式</li>
+          <li v-for="item in drawTypes" @click="drawSelect = item"><a>{{item.name}}</a></li>
+        </ul>
+      </div>
       <!--<button type="button" class="btn btn-default" @click="selectRoad">选择线路</button>-->
       <button type="button" class="btn btn-default measure-distance">测量距离</button>
       <button class="btn btn-default measure-area">测量面积</button>
@@ -58,14 +70,14 @@
 </template>
 
 <script>
-  let $parser, $Map, $on, $dom, $has, $Color, $Units, $bubblePopup, $MeasureTools, $TDTLayer, $TDTImgLayer,
+  let $parser, $Map, $on, $dom, $has, $Color, $Units,$Query,$QueryTask, $bubblePopup, $MeasureTools, $TDTLayer, $TDTImgLayer,
     $TDTAnnoLayer, $TDTLayer_webMercator, $SnappingManager, $HomeButton,
     $Measurement, $OverviewMap, $LocateButton, $FeatureLayer, $GeometryService,
-    $ArcGISDynamicMapServiceLayer, $SimpleMarkerSymbol, $SimpleLineSymbol, $GraphicsLayer, $Graphic,
-    $Point, $Polygon, $InfoTemplate, $SpatialReference, $Extent, $registry, $esriConfig, $query, $jsapiBundle,
+    $ArcGISDynamicMapServiceLayer, $SimpleMarkerSymbol, $SimpleLineSymbol,$CartographicLineSymbol, $GraphicsLayer, $Graphic,
+    $Draw,$Point, $Polygon, $InfoTemplate, $SpatialReference, $Extent, $registry, $esriConfig, $query, $jsapiBundle,
     $Editor, $TemplatePicker, $AttributeInspector, $CheckBox, $keys, $ToolbarSeparator, $JsonRest,
     $FindTask, $FindParameters, $ArrayUtils, $SimpleFillSymbol, $webMercatorUtils;
-  let roadHighLightLayer, boundaryHighLightLayer ,regionHighLightLayer;
+  let roadHighLightLayer, boundaryHighLightLayer ,regionHighLightLayer,selectAreaHighLightLayer;
   let root = window;
   export default{
     props: [],
@@ -78,6 +90,8 @@
           "esri/sniff",
           "esri/Color",
           "esri/units",
+          "esri/tasks/query",
+          "esri/tasks/QueryTask",
           "popup/bubblePopup",
           "utils/MeasureTools",
           "tdtLayers/TDTLayer",
@@ -95,8 +109,10 @@
           "esri/layers/ArcGISDynamicMapServiceLayer",
           "esri/symbols/SimpleMarkerSymbol",
           "esri/symbols/SimpleLineSymbol",
+          "esri/symbols/CartographicLineSymbol",
           "esri/layers/GraphicsLayer",
           "esri/graphic",
+          "esri/toolbars/draw",
           "esri/geometry/Point",
           "esri/geometry/Polygon",
           "esri/InfoTemplate",
@@ -124,28 +140,29 @@
           "dijit/layout/ContentPane",
           "dijit/TitlePane",
           "dojo/domReady!"],
-        function (parser, Map, on, dom, has, Color, Units, bubblePopup, MeasureTools, TDTLayer, TDTImgLayer,
+        function (parser, Map, on, dom, has, Color, Units,Query,QueryTask, bubblePopup, MeasureTools, TDTLayer, TDTImgLayer,
                   TDTAnnoLayer, TDTLayer_webMercator, SnappingManager, HomeButton,
                   Measurement, OverviewMap, LocateButton, FeatureLayer, GeometryService,
-                  ArcGISDynamicMapServiceLayer, SimpleMarkerSymbol, SimpleLineSymbol, GraphicsLayer, Graphic,
-                  Point, Polygon, InfoTemplate, SpatialReference, Extent, registry, esriConfig, query, jsapiBundle,
+                  ArcGISDynamicMapServiceLayer, SimpleMarkerSymbol, SimpleLineSymbol,CartographicLineSymbol, GraphicsLayer, Graphic,
+                  Draw, Point, Polygon, InfoTemplate, SpatialReference, Extent, registry, esriConfig, query, jsapiBundle,
                   Editor, TemplatePicker, AttributeInspector, CheckBox, keys, ToolbarSeparator, JsonRest,
                   FindTask, FindParameters, ArrayUtils, SimpleFillSymbol, webMercatorUtils) {
           parser.parse();
           esriConfig.defaults.io.proxyUrl = "./static/proxy/proxy.ashx";
           esriConfig.defaults.io.alwaysUseProxy = false;
           esriConfig.defaults.geometryService = new GeometryService("http://60.29.110.104:6080/arcgis/rest/services/Utilities/Geometry/GeometryServer");
-          [$parser, $Map, $on, $dom, $has, $Color, $Units, $bubblePopup, $MeasureTools, $TDTLayer, $TDTImgLayer,
+          [$parser, $Map, $on, $dom, $has, $Color, $Units,$Query,$QueryTask, $bubblePopup, $MeasureTools, $TDTLayer, $TDTImgLayer,
             $TDTAnnoLayer, $TDTLayer_webMercator, $SnappingManager, $HomeButton,
             $Measurement, $OverviewMap, $LocateButton, $FeatureLayer, $GeometryService,
-            $ArcGISDynamicMapServiceLayer, $SimpleMarkerSymbol, $SimpleLineSymbol, $GraphicsLayer, $Graphic,
-            $Point, $Polygon, $InfoTemplate, $SpatialReference, $Extent, $registry, $esriConfig, $query, $jsapiBundle,
+            $ArcGISDynamicMapServiceLayer, $SimpleMarkerSymbol, $SimpleLineSymbol,$CartographicLineSymbol, $GraphicsLayer, $Graphic,
+            $Draw,$Point, $Polygon, $InfoTemplate, $SpatialReference, $Extent, $registry, $esriConfig, $query, $jsapiBundle,
             $Editor, $TemplatePicker, $AttributeInspector, $CheckBox, $keys, $ToolbarSeparator, $JsonRest,
-            $FindTask, $FindParameters, $ArrayUtils, $SimpleFillSymbol, $webMercatorUtils] = [parser, Map, on, dom, has, Color, Units, bubblePopup, MeasureTools, TDTLayer, TDTImgLayer,
+            $FindTask, $FindParameters, $ArrayUtils, $SimpleFillSymbol, $webMercatorUtils] = [parser, Map, on, dom, has, Color, Units,Query,
+            QueryTask,bubblePopup, MeasureTools, TDTLayer, TDTImgLayer,
             TDTAnnoLayer, TDTLayer_webMercator, SnappingManager, HomeButton,
             Measurement, OverviewMap, LocateButton, FeatureLayer, GeometryService,
-            ArcGISDynamicMapServiceLayer, SimpleMarkerSymbol, SimpleLineSymbol, GraphicsLayer, Graphic,
-            Point, Polygon, InfoTemplate, SpatialReference, Extent, registry, esriConfig, query, jsapiBundle,
+            ArcGISDynamicMapServiceLayer, SimpleMarkerSymbol, SimpleLineSymbol,CartographicLineSymbol, GraphicsLayer, Graphic,
+            Draw,Point, Polygon, InfoTemplate, SpatialReference, Extent, registry, esriConfig, query, jsapiBundle,
             Editor, TemplatePicker, AttributeInspector, CheckBox, keys, ToolbarSeparator, JsonRest,
             FindTask, FindParameters, ArrayUtils, SimpleFillSymbol, webMercatorUtils];
 
@@ -217,7 +234,8 @@
           map.addLayer(boundaryHighLightLayer);
           regionHighLightLayer=new GraphicsLayer();
           map.addLayer(regionHighLightLayer);
-
+          selectAreaHighLightLayer=new GraphicsLayer();
+          map.addLayer(selectAreaHighLightLayer);
           tianjinRoadMapLayer.on("click", showTianjinRoadInfo);
           tianjinRoadLineLayer.on("click", showTianjinRoadInfo);
           tianjinRoadPolyLayer.on("click", showTianjinRoadInfo);
@@ -291,7 +309,8 @@
         tianjinRoadUrl: "http://60.29.110.104:6080/arcgis/rest/services/天津市/天津市路网编辑/FeatureServer",
         //FeatureServer不能用于属性搜索
         tianjinRoadUrlMapServer: "http://60.29.110.104:6080/arcgis/rest/services/天津市/天津市路网编辑/MapServer",
-        msg: 'hello vue.',
+        drawTypes:[{name:"框选",type:"rectangle"},{name:"圆形",type:"circle"},{name:"多边形",type:"polygon"},{name:"手绘",type:"freehandpolygon"}],
+        drawSelect: {name:"框选",type:"rectangle"},
         radioChecked: true,
         checkboxRoad: false,
         checkboxHightlight: false,
@@ -352,11 +371,64 @@
         } else {
           root.TDTAnnoLayer.hide();
         }
+      },
+      drawSelect:function(value,oldValue){
+        this.handSelectRoad();
       }
     },
     methods: {
       handSelectRoad: function () {
-        // TODO 根据范围手动选择道路
+        let self=this;
+        selectAreaHighLightLayer.clear();
+        roadHighLightLayer.clear();
+        //根据范围手动选择道路
+        //let lineSymbol = new $CartographicLineSymbol($CartographicLineSymbol.STYLE_SOLID,new $Color([255, 0, 0]), 10,$CartographicLineSymbol.CAP_ROUND,$CartographicLineSymbol.JOIN_MITER, 5);
+        var lineSymbol = new $SimpleLineSymbol($SimpleLineSymbol.STYLE_DASH, new $Color([31, 0, 252]), 6);
+        let toolBar=new $Draw(root.map);
+        //toolBar.on("draw-end",addGraphic);
+        toolBar.on("draw-end",doQuery);
+        root.map.disableMapNavigation();//禁用map双击放大事件
+        toolBar.activate(this.drawSelect.type);
+        function addGraphic(evt){
+          toolBar.deactivate();
+          root.map.enableMapNavigation();
+          let areaSymbol;
+          if(evt.geometry.type==="point"|| evt.geometry.type==="multipoint"){
+            areaSymbol=markerSymbol;
+          }else if(evt.geometry.type==="line" || evt.geometry.type==="polyline"){
+            areaSymbol=lineSymbol;
+          }else{
+            areaSymbol=simpleFillSymbol;
+          }
+          //selectAreaHighLightLayer.add(new $Graphic(evt.geometry,areaSymbol)); //不添加到地图中
+        }
+        function doQuery(evt){
+          let query=new $Query();
+          query.geometry=evt.geometry;
+          let queryTask=new $QueryTask(self.tianjinRoadUrlMapServer+"/0");
+          query.returnGeometry=true;
+          query.outFields=["*"];
+          queryTask.execute(query,showResults);
+        }
+        function showResults(featureSet){
+          toolBar.deactivate();
+          root.map.enableMapNavigation();
+          //root.map.setMapCursor();
+          let resultFeatures=featureSet.features;
+          let myResult=[];
+          for(let i=0,il=resultFeatures.length;i<il;i++){
+            let graphic=resultFeatures[i];
+            graphic.setSymbol(lineSymbol);
+            roadHighLightLayer.add(graphic);
+            var g={};
+            g.feature=graphic;
+            myResult.push(g);
+          }
+          if(myResult.length>0){
+            console.log(myResult);
+            self.addToTable(myResult);
+          }
+        }
       },
       //将点平移到map正中 (并 缩放到制定map级别)
       setMapCenter: function (e, level) {
@@ -428,6 +500,7 @@
         }
       },
       addToTable: function (result) {
+        console.log(result);
         this.$dispatch("roadFeatures", result);
       },
       addRoadGraphic: function (feature) {
@@ -487,6 +560,7 @@
       clearLayers: function () {
         roadHighLightLayer.clear();
         regionHighLightLayer.clear();
+        selectAreaHighLightLayer.clear();
       }
     },
     destroyed(){
@@ -527,7 +601,7 @@
   #measureTools {
     position: absolute;
     top: 10px;
-    right: 50px;
+    right: 15px;
     z-index: 50;
   }
 
@@ -543,7 +617,10 @@
     z-index: 2;
   }
 
-  ul li label {
+  #map ul li label {
     padding-left: 16px;
+  }
+  #map ul li a:hover{
+    cursor:pointer;
   }
 </style>

@@ -28,6 +28,11 @@
         showBottomWrap: false
       }
     },
+    watch:{
+      roads:function(value,oldValue){
+        console.log(value);
+      }
+    },
     methods: {
       toggleBottom: function () {
         var timer = 0;
@@ -86,7 +91,7 @@
         this.onRoadClick(road);
       },
       roadFeatures: function (roads) {
-        this.roads = roads;
+        this.roads=roads;
       },
       roadSearch: function (keyword) {
         this.$broadcast('searchRoodGraphics', keyword);
