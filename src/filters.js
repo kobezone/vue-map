@@ -81,7 +81,7 @@ exports.getTabClassName = (tab, good, top) => {
  */
 exports.getTitleStr = tab => {
     let str = "";
-    switch (tab) {
+    switch (tab){
         case "share":
             str = "分享";
             break;

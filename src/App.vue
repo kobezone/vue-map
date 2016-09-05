@@ -4,6 +4,7 @@
 </template>
 <script>
   import HeaderNav from './components/layout/HeaderNav'
+  import store from './vuex/store'
   export default {
     ready(){
     },
@@ -14,7 +15,8 @@
     components: {
       HeaderNav
     },
-    events: {}
+    events: {},
+    store
   }
 </script>
 

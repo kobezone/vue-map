@@ -15,24 +15,24 @@ Vue.use(VueResource);
 Vue.use(VueRouter);
 $.ajaxSettings.crossDomain = true;
 const router = new VueRouter({
-  hashbang: true,
-  history: false,
-  saveScrollPosition: true,
-  transitionOnLoad: true
+    hashbang: true,
+    history: false,
+    saveScrollPosition: true,
+    transitionOnLoad: true
 });
-router.mode="html5";
+router.mode = "html5";
 
 //登录中间验证，页面需要登录而没有登录的情况直接跳转登录
 /*router.beforeEach((transition)=>{
-  if(transition.to.auth){
-    console.log(transition.to.path);
-  }else{
-    console.log("transition.next()");
-    transition.next();
-  }
-});*/
+ if(transition.to.auth){
+ console.log(transition.to.path);
+ }else{
+ console.log("transition.next()");
+ transition.next();
+ }
+ });*/
 router.afterEach(function (transition) {
-  console.log('成功浏览到: ' + transition.to.path)
+    console.log('成功浏览到: ' + transition.to.path)
 });
 
 // let app=Vue.extend({});

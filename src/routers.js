@@ -7,7 +7,7 @@ export default function(router){
   router.map({
     '*':{//404路由
       component:function (resolve) {
-        require(['./pages/home.vue'],resolve);
+        require(['./pages/404.vue'],resolve);
       }
     },
     '/':{//首页
