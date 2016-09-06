@@ -1,6 +1,7 @@
 <template>
   <header-nav></header-nav>
   <router-view></router-view>
+  <back-to-top></back-to-top>
 </template>
 <script>
   import HeaderNav from './components/layout/HeaderNav'
@@ -13,7 +14,8 @@
     },
     methods: {},
     components: {
-      HeaderNav
+      HeaderNav,
+      'backToTop':require('./components/backTop.vue')
     },
     events: {},
     store

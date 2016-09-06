@@ -16,7 +16,7 @@
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
         <li :class="{ 'active': $route.path == '/gis'}"><a v-link="{ path: 'gis' }">道路设施GIS</a></li>
-        <li><a href="#">资产管理</a></li>
+        <li ><a href="#" >资产管理</a></li>
         <li><a href="#">检测数据</a></li>
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">日常养管 <span class="caret"></span></a>
@@ -40,20 +40,36 @@
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">让你笑了 <span class="caret"></span></a>
           <ul class="dropdown-menu">
-            <li><a href="#">查看个人信息</a></li>
+            <li><a href="#" @click.prevent="showPersonalInfo">查看个人信息</a></li>
             <li><a href="#">修改密码</a></li>
             <li><a href="#">查看我的消息</a></li>
             <li role="separator" class="divider"></li>
-            <li><a href="#">退出</a></li>
+            <li><a href="#" @click.prevent="exit">退出</a></li>
           </ul>
         </li>
       </ul>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
-
 </template>
-
+<script>
+  export default {
+    data(){
+      return {
+        info:{}
+      }
+    },
+    methods: {
+      showPersonalInfo(){
+        console.log("查看个人信息")
+      },
+      // 退出
+      exit() {
+        this.$route.router.go({ name: 'login' });
+      },
+    },
+  };
+</script>
 
 <style scoped>
 

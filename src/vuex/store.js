@@ -11,6 +11,7 @@ const state = {
   selectedRegionName: "",
   regionRoads: {},
   showBottomWrap: false,
+  clearLayers:false,
   notes: [],
   activeNote: {}
 };
@@ -21,8 +22,16 @@ const mutations = {
   UPDATE_REGION_ROADS(state, roads){
     state.regionRoads = roads;
   },
-  SHOW_BOTTOM_WRAP(state,bool){
-    state.showBottomWrap=bool;
+  SHOW_BOTTOM_WRAP(state, bool){
+    state.showBottomWrap = bool;
+  },
+  TOGGLE_BOTTOM_WRAP(state){
+    let timer = 0;
+    if (state.showBottomWrap) timer = 200;
+    state.showBottomWrap = false;
+    setTimeout(() => {
+      state.showBottomWrap = true;
+    }, timer)
   },
   ADD_NOTE(state){
     const newNote = {

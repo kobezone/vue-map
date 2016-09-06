@@ -9,7 +9,7 @@
   export default {
     data() {
       return {
-        time: 5,
+        time: 5
       };
     },
     route: {

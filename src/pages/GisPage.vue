@@ -1,6 +1,6 @@
 <script>
   import {getRegionRoads, getRegionName,showBottomWrap} from '../vuex/getters';
-  import {selectedRegionName, updateRegionRoads,setBottomWrap} from '../vuex/actions';
+  import {selectedRegionName, updateRegionRoads,setBottomWrap,toggleBottomWrap} from '../vuex/actions';
   export default {
     vuex: {
       getters: {
@@ -11,7 +11,8 @@
       actions: {
         selectedRegionName,
         updateRegionRoads,
-        setBottomWrap
+        setBottomWrap,
+        toggleBottom:toggleBottomWrap,
       }
     },
     route: {
@@ -48,22 +49,11 @@
     },
     watch: {
       roads: function (value, oldValue) {
-        //this.toggleBottom();
         this.currentSelectedRoad={};
 
       }
     },
     methods: {
-      toggleBottom: function () {
-        var timer = 0;
-        if (this.showBottomWrap) timer = 200;
-        //this.showBottomWrap = false;
-        this.setBottomWrap(false);
-        setTimeout(() => {
-          this.setBottomWrap(true);
-          //this.showBottomWrap = true;
-        }, timer)
-      },
       onDistrictClick: function (district) {
         this.currentSelectedRoad = {};
         this.currentSelectedDistrict = district;
@@ -75,7 +65,6 @@
       hideBottomWrap: function () {
         this.$broadcast('clearLayers');
         this.setBottomWrap(false);
-        //this.showBottomWrap = false;
       },
       onRoadClick: function (road) {
         this.currentSelectedRoad = road;
@@ -94,7 +83,6 @@
       showCrossSection: function () {
         $('#road-cross-section-modal').modal('show');
       }
-
     },
 
     ready(){

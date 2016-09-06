@@ -13,7 +13,9 @@ export const updateRegionRoads=({dispatch},roads)=>{
 export const setBottomWrap=({dispatch},bool)=>{
   dispatch('SHOW_BOTTOM_WRAP',bool)
 };
-
+export const toggleBottomWrap=({dispatch})=>{
+  dispatch('TOGGLE_BOTTOM_WRAP');
+};
 export const addNote=({ dispatch})=>{
   dispatch('ADD_NOTE')
 };

@@ -16,6 +16,15 @@ export default function(router){
         require(['./pages/home.vue'],resolve);
       }
     },
+    '/login':{
+      name:'login',
+      component:require('./pages/login.vue'),
+      auth:true
+    },
+    '/home':{
+      name:'home',
+      component:require('./pages/home.vue')
+    },
     '/gis':{//GIS
       name:'gis',
       component:function (resolve) {
