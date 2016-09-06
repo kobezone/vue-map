@@ -10,6 +10,10 @@ export const updateRegionRoads=({dispatch},roads)=>{
   dispatch('UPDATE_REGION_ROADS',roads)
 };
 
+export const setBottomWrap=({dispatch},bool)=>{
+  dispatch('SHOW_BOTTOM_WRAP',bool)
+};
+
 export const addNote=({ dispatch})=>{
   dispatch('ADD_NOTE')
 };

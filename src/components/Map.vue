@@ -80,19 +80,30 @@
     let roadHighLightLayer, boundaryHighLightLayer, regionHighLightLayer, selectAreaHighLightLayer;
     let root = window;
 
-    import {getRegionName} from '../vuex/getters'
-    import {selectedRegionName,updateRegionRoads} from '../vuex/actions'
+    import {getRegionName,showBottomWrap} from '../vuex/getters'
+    import {selectedRegionName,updateRegionRoads,setBottomWrap} from '../vuex/actions'
     export default{
         vuex:{
             getters:{
-                getRegionName
+                getRegionName,
+              showBottomWrap
             },
             actions:{
                 selectedRegionName,
-                updateRegionRoads
+                updateRegionRoads,
+              setBottomWrap
             }
         },
-        props: [],
+      computed:{
+          thisMessage:{
+            get(){
+              return this.districtLongLat
+            },
+            set(val){
+              this.districtLongLat.push(val)
+            }
+          }
+      },
         ready(){
             let self = this;
             dojoRequire(["dojo/parser",
@@ -447,10 +458,21 @@
                     }
                     if (myResult.length > 0) {
                         self.addToTable(myResult);
+                        self.toggleBottom();
                         //self.selectedRegionName(" "); //加上之后第一次选择 table不更新
                     }
                 }
             },
+          toggleBottom: function () {
+            var timer = 0;
+            if (this.showBottomWrap) timer = 200;
+            //this.showBottomWrap = false;
+            this.setBottomWrap(false);
+            setTimeout(() => {
+              this.setBottomWrap(true);
+              //this.showBottomWrap = true;
+            }, timer)
+          },
             //将点平移到map正中 (并 缩放到制定map级别)
             setMapCenter: function (e, level) {
                 var location = new Point(e.longitude, e.latitude, root.map.spatialReference);
@@ -474,7 +496,7 @@
                 findTask.execute(findParams, function (result) {
                     self.roadHedong = result;
                     sessionStorage.roadData = JSON.stringify(result);
-                    self.addToTable(result);
+//                    self.addToTable(district,result);
                     self.updateRegionRoads(result);
                 });
             },
