@@ -32,7 +32,7 @@ router.mode = "html5";
  }
  });*/
 router.afterEach(function (transition) {
-    console.log('成功浏览到: ' + transition.to.path)
+    // console.log('成功浏览到: ' + transition.to.path)
 });
 
 // let app=Vue.extend({});

@@ -4,6 +4,7 @@
       <div class="col-md-3 col-md-offset-5">
         <h3>将要跳转到 GIS 页面</h3>
         <img class="index img-rounded" src="../assets/loading.gif">
+
       </div>
     </div>
 
