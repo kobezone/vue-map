@@ -17,8 +17,8 @@
       <ul class="nav navbar-nav">
         <li :class="{ 'active': $route.path == '/gis'}"><a v-link="{ path: 'gis' }">道路设施GIS</a></li>
         <li>
-          <a v-link="{ path: '/'}" >资产管理</a></li>
-        <li><a v-link="{path:'/'}">检测数据</a></li>
+          <a v-link="{ path: '/canvas'}" >资产管理</a></li>
+        <li><a v-link="{ path:'/table'}">检测数据</a></li>
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">日常养管 <span class="caret"></span></a>
           <ul class="dropdown-menu">
