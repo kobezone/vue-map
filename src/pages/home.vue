@@ -15,9 +15,9 @@
     export default{
       ready(){
 
-/*        setTimeout(()=>{
+        setTimeout(()=>{
           this.$route.router.go({ name: 'gis'});
-        },1000)*/
+        },1000)
       },
       route:{//路由切换事件
         /*data(transition){

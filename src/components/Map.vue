@@ -95,16 +95,7 @@
         toggleBottom:toggleBottomWrap
       }
     },
-    computed: {
-      thisMessage: {
-        get(){
-          return this.districtLongLat
-        },
-        set(val){
-          this.districtLongLat.push(val)
-        }
-      }
-    },
+    computed: {},
     ready(){
       let self = this;
       dojoRequire(["dojo/parser",
@@ -247,6 +238,8 @@
 
           map.addLayers([tianjinRoadMapLayer, tianjinRoadLineLayer, tianjinRoadPolyLayer]);
 
+
+
           tianjinRoadMapLayer.hide();
           tianjinRoadLineLayer.hide();
           tianjinRoadPolyLayer.hide();
@@ -271,7 +264,7 @@
 
           var dynamicPointLayer = new GraphicsLayer({id: "dynamicPointLayer"});
           map.addLayer(dynamicPointLayer);
-
+          dynamicPointLayer.hide();
           function addPointGraphics() {
             var store = new JsonRest({target: "static/data/points.json"});
             store.query({ID: "*"}).then(function (result, request) {
@@ -343,19 +336,6 @@
         checkboxHightlight: false,
         checkboxAnno: true,
         isOne: 0,
-        districtLongLat: {
-          和平区: {longitude: "117.184570", latitude: "39.125082"},
-          南开区: {longitude: "117.170195", latitude: "39.104405"},
-          河西区: {longitude: "117.203046", latitude: "39.088054"},
-          河东区: {longitude: "117.232100", latitude: "39.117494"},
-          河北区: {longitude: "117.200643", latitude: "39.163221"},
-          红桥区: {longitude: "117.159230", latitude: "39.156440"},
-          东丽区: {longitude: "117.400800", latitude: "39.140647"},
-          西青区: {longitude: "117.093768", latitude: "39.035963"},
-          北辰区: {longitude: "117.121913", latitude: "39.226247"},
-          津南区: {longitude: "117.375059", latitude: "38.990569"},
-          武清区: {longitude: "117.034342", latitude: "39.379869"}
-        },
         allRegion: [],
         roadHedong: {}
       }
@@ -463,7 +443,7 @@
           }
         }
       },
-      //将点平移到map正中 (并 缩放到制定map级别)
+      //将点平移到map正中 (并 缩放到制至map级别)
       setMapCenter: function (e, level) {
         var location = new Point(e.longitude, e.latitude, root.map.spatialReference);
 

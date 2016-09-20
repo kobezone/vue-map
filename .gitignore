@@ -11,5 +11,4 @@ test/e2e/reports
 .editorconfig
 build/
 config/
-static/
 .vscode/

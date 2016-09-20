@@ -138,9 +138,11 @@
             <canvas id="road" width="1012" height="445"></canvas>
           </section>
         </div>
+
       </div>
     </div>
   </div>
+
 </template>
 <script>
   export default{
@@ -235,7 +237,7 @@
         name: "wangweimin",
         msg: 'hello vue',
         isShow: true,
-        currentView: 'foot'
+        currentView: 'foot',
       }
     },
     ready(){
@@ -978,7 +980,8 @@
 
       draw28("canvas28");
     },
-    methods: {},
+    methods: {
+    },
     computed: {
       thisMessage: {
         get(){
