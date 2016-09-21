@@ -210,7 +210,7 @@
           root.map = map;
           root.TDTLayer.show();
           root.TDTImgLayer.hide();
-          root.TDTAnnoLayer.show();
+          root.TDTAnnoLayer.hide();
           root.tianjinRoadMapLayer = new FeatureLayer(self.tianjinRoadSHP + "/1", {
             mode: FeatureLayer.MODE_ONDEMAND,
             outFields: ['*'],
@@ -264,7 +264,7 @@
 
           var dynamicPointLayer = new GraphicsLayer({id: "dynamicPointLayer"});
           map.addLayer(dynamicPointLayer);
-          dynamicPointLayer.hide();
+          //dynamicPointLayer.hide();
           function addPointGraphics() {
             var store = new JsonRest({target: "static/data/points.json"});
             store.query({ID: "*"}).then(function (result, request) {
@@ -334,7 +334,7 @@
         radioChecked: true,
         checkboxRoad: false,
         checkboxHightlight: false,
-        checkboxAnno: true,
+        checkboxAnno: false,
         isOne: 0,
         allRegion: [],
         roadHedong: {}
