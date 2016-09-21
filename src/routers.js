@@ -42,6 +42,10 @@ export default function (router) {
       '/table': {
         name:'table',
         component:require('./pages/table.vue')
+      },
+      '/echarts':{
+        name:'echarts',
+        component:require('./pages/echarts.vue')
       }
     }
   )

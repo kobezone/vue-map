@@ -34,7 +34,7 @@
             <li><a href="#">基础数据</a></li>
           </ul>
         </li>
-        <li><a href="#">占掘路状态</a></li>
+        <li><a v-link="{ path:'/echarts'}">占掘路状态</a></li>
       </ul>
 
       <ul class="nav navbar-nav navbar-right">
