@@ -1,7 +1,7 @@
 <template>
   <header-nav></header-nav>
   <router-view></router-view>
-  <back-to-top></back-to-top>
+  <!--<back-to-top></back-to-top>-->
 </template>
 <script>
   import HeaderNav from './components/layout/HeaderNav'
