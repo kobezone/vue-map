@@ -17,6 +17,12 @@
     <input type="radio" name="radio-1" id="radio-2-3">
     <label for="radio-2-3"></label>
   </div>
+
+
+  <div v-for="item in s" @click="f(item)" class="radio-1">
+    <p style="background: #cc99cc;cursor: pointer;">{{item.a}}{{item.c}}</p>
+  </div>
+
 </template>
 
 <script>
@@ -30,7 +36,12 @@
       return {
         msg: 'hello vue',
         isShow: true,
-        currentView: 'foot'
+        currentView: 'foot',
+        s: [
+          {a: 1},
+          {a: 2},
+          {a: 3}
+        ]
       }
     },
     ready(){
@@ -49,7 +60,7 @@
               formatter: "{a}<br/>{b} : {c} ({d}%)"
             },
             legend: {
-              data: ['搜索引擎', '直接访问', '邮件营销', '联盟广告', '视频广告','报纸广告']
+              data: ['搜索引擎', '直接访问', '邮件营销', '联盟广告', '视频广告', '报纸广告']
             },
             toolbox: {
               show: true,
@@ -103,7 +114,7 @@
             },
             series: [
               {
-                color: ['rgba(0,255,102,0.9)', 'rgba(204,0,0,0.9)', 'rgba(255,255,0,0.8)', 'rgba(155,51,0,0.9)', 'rgba(0,0,255,0.9)','rgba(0,100,158,0.9)'],
+                color: ['rgba(0,255,102,0.9)', 'rgba(204,0,0,0.9)', 'rgba(255,255,0,0.8)', 'rgba(155,51,0,0.9)', 'rgba(0,0,255,0.9)', 'rgba(0,100,158,0.9)'],
                 name: '访问来源',
                 type: 'pie',
                 radius: '55%',
@@ -192,7 +203,13 @@
         });
 
     },
-    methods: {},
+    methods: {
+      f:function(value){
+        console.log(value);
+//        value.c="qqqq";
+        value.$set('c',3)
+      }
+    },
     computed: {},
     events: {},
     components: { //三种写法,注意命名转变
@@ -208,8 +225,9 @@
     background-color: darkseagreen;
     text-align: center;
   }
+
   .radio-1 label {
-    display:block;
+    display: block;
     position: relative;
     width: 28px;
     height: 28px;
@@ -232,6 +250,7 @@
     transform: scale(0);
     transition: transform .2s ease-out;
   }
+
   .radio-1 [type="radio"]:checked + label {
     background-color: #eeeeee;
     transition: background-color .2s ease-in;
@@ -241,10 +260,10 @@
     transform: scale(1);
     transition: transform .2s ease-in;
   }
-  .radio-1 [type="radio"]{
+
+  .radio-1 [type="radio"] {
     display: none;
   }
-
 
   .radio-2 {
     width: 900px;
@@ -285,7 +304,7 @@
     display: none;
   }
 
-  .radio-2 [type="radio"]:checked + label:after{
+  .radio-2 [type="radio"]:checked + label:after {
     transform: rotate(0deg);
     transition: transform .2s ease-out;
   }
