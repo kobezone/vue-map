@@ -11,9 +11,9 @@ export default function (router) {
         }
       },
       '/': {//首页
-        name: 'home',
+        name: 'gis',
         component: function (resolve) {
-          require(['./pages/home.vue'], resolve);
+          require(['./pages/GisPage.vue'], resolve);
         }
       },
       '/login': {

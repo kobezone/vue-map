@@ -9,7 +9,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">交委平台 <span style='font-size:12px'>v0.1</span></a>
+      <a class="navbar-brand" v-link="{ path:'/home' }">交委平台 <span style='font-size:12px'>v0.1</span></a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
@@ -34,7 +34,7 @@
             <li><a href="#">基础数据</a></li>
           </ul>
         </li>
-        <li><a v-link="{ path:'/echarts'}">占掘路状态</a></li>
+        <li><a v-link="{ path:'/'}">占掘路状态</a></li>
       </ul>
 
       <ul class="nav navbar-nav navbar-right">
